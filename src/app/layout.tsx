@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     siteName: "EvoInterview",
     images: [
       {
-        url: "https://evointerview.com/og-image.jpg", // Replace with your actual Open Graph image URL
+        url: "https://evointerview.com/brain-circuit.svg", // Replace with your actual Open Graph image URL
         width: 1200,
         height: 630,
         alt: "EvoInterview - AI-powered Interview Preparation",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     title: "EvoInterview | Your Path to Interview Success",
     description: "EvoInterview helps you ace your job interviews with AI-powered mock interviews, personalized feedback, and comprehensive interview preparation tools.",
     creator: "@EvoInterview", // Replace with your Twitter handle
-    images: ["https://evointerview.com/twitter-image.jpg"], // Replace with your actual Twitter card image URL
+    images: ["https://evointerview.com/brain-circuit.svg"], // Replace with your actual Twitter card image URL
   },
 }
 
