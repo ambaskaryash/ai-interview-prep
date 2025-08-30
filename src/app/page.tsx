@@ -85,7 +85,7 @@ function Hero() {
             "@type": "Organization",
             name: "EvoInterview",
             url: "https://evointerview.com",
-            logo: "https://evointerview.com/logo.png", // Assuming you have a logo.png in your public directory
+            logo: "https://evointerview.com/brain-circuit.svg", // Represents the BrainCircuitIcon used in the header
             sameAs: [
               "https://twitter.com/evointerview", // Replace with actual Twitter handle
               "https://linkedin.com/company/evointerview", // Replace with actual LinkedIn page

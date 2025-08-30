@@ -47,6 +47,9 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
+        <head>
+          <link rel="icon" href="/favicon.ico" />
+        </head>
         <body className={`${outfitSans.variable} antialiased font-sans`}>
           <ThemeProvider
             attribute="class"
