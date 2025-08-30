@@ -77,6 +77,22 @@ async function NavButton() {
 function Hero() {
   return (
     <section className="relative overflow-hidden py-20 sm:py-32">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "EvoInterview",
+            url: "https://evointerview.com",
+            logo: "https://evointerview.com/logo.png", // Assuming you have a logo.png in your public directory
+            sameAs: [
+              "https://twitter.com/evointerview", // Replace with actual Twitter handle
+              "https://linkedin.com/company/evointerview", // Replace with actual LinkedIn page
+            ],
+          }),
+        }}
+      />
       <div className="container">
         <div className="text-center">
           <h2 className="text-4xl sm:text-6xl font-bold text-foreground mb-6 leading-tight">
@@ -154,6 +170,33 @@ function Features() {
 function DetailedFeatures() {
   return (
     <section className="py-20 bg-muted/20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: "EvoInterview Premium Plan",
+            description: "AI-powered job preparation tools for interviews, resume optimization, and technical questions.",
+            brand: {
+              "@type": "Brand",
+              name: "EvoInterview",
+            },
+            offers: {
+              "@type": "Offer",
+              priceCurrency: "USD",
+              price: "29.99", // Example price
+              itemCondition: "https://schema.org/NewCondition",
+              availability: "https://schema.org/InStock",
+            },
+            aggregateRating: {
+              "@type": "AggregateRating",
+              ratingValue: "4.9", // Example rating
+              reviewCount: "1200", // Example review count
+            },
+          }),
+        }}
+      />
       <div className="container">
         <div className="text-center mb-16">
           <h3 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
