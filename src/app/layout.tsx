@@ -13,7 +13,7 @@ const outfitSans = Outfit({
 export const metadata: Metadata = {
   title: "EvoInterview | Your Path to Interview Success",
   description: "EvoInterview helps you ace your job interviews with AI-powered mock interviews, personalized feedback, and comprehensive interview preparation tools.",
-  keywords: ["interview preparation", "mock interview", "AI interview coach", "job interview", "career development", "interview skills"],
+  keywords: ["AI interview preparation", "mock interview platform", "AI interview coach", "job interview practice", "career advancement", "interview skills training", "resume optimization", "coding interview prep", "behavioral interview questions", "technical interview tips", "EvoInterview", "AI-powered job search", "interview success", "personalized feedback", "interview simulator"],
   openGraph: {
     title: "EvoInterview | Your Path to Interview Success",
     description: "EvoInterview helps you ace your job interviews with AI-powered mock interviews, personalized feedback, and comprehensive interview preparation tools.",
