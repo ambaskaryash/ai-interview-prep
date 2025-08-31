@@ -11,13 +11,15 @@ import {
   Search,
   SpeechIcon,
 } from "lucide-react"
-import Link from "next/link"
 import Image from "next/image"
+import Link from "next/link"
 import { Suspense } from "react"
 import { UserAvatar } from "@/features/users/components/UserAvatar"
 import { PricingTable } from "@/services/clerk/components/PricingTable"
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const { userId } = await getCurrentUser();
+
   return (
     <div className="bg-gradient-to-b from-background to-muted/20">
       <Navbar />
@@ -26,7 +28,7 @@ export default function LandingPage() {
       <DetailedFeatures />
       <Stats />
       <Testimonials />
-      <Pricing />
+      <Pricing userId={userId} />
       <Footer />
     </div>
   )
@@ -649,7 +651,8 @@ function Testimonials() {
   )
 }
 
-function Pricing() {
+function Pricing({ userId }: { userId: string | null }) {
+
   return (
     <section className="py-20 bg-muted/20">
       <div className="container">
@@ -665,7 +668,7 @@ function Pricing() {
         </div>
 
         <div className="max-w-5xl mx-auto">
-          <PricingTable />
+          <PricingTable userId={userId} />
         </div>
 
         <div className="text-center mt-12">
@@ -686,6 +689,17 @@ function Footer() {
           <p className="text-muted-foreground">
             Empowering your career journey with AI-powered job preparation
             tools.
+          </p>
+          <p className="text-muted-foreground mt-2">
+            <Link href="/terms-and-conditions" className="hover:underline">
+              Terms and Conditions
+            </Link> |
+            <Link href="/refund-policy" className="hover:underline">
+              Refund Policy
+            </Link> |
+            <Link href="/privacy-policy" className="hover:underline">
+              Privacy Policy
+            </Link>
           </p>
         </div>
       </div>
