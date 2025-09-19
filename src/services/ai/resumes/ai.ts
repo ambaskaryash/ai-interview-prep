@@ -14,7 +14,7 @@ export async function analyzeResumeForJob({
   >
 }) {
   return streamObject({
-    model: google("gemini-2.5-flash"),
+    model: google("gemini-2.5-flash") as any,
     schema: aiAnalyzeSchema,
     messages: [
       {
@@ -23,7 +23,7 @@ export async function analyzeResumeForJob({
           {
             type: "file",
             data: await resumeFile.arrayBuffer(),
-            mimeType: resumeFile.type,
+            mediaType: resumeFile.type,
           },
         ],
       },

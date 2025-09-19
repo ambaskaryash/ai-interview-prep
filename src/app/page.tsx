@@ -28,7 +28,7 @@ export default async function LandingPage() {
       <DetailedFeatures />
       <Stats />
       <Testimonials />
-      <Pricing userId={userId} />
+      <Pricing />
       <Footer />
     </div>
   )
@@ -651,7 +651,7 @@ function Testimonials() {
   )
 }
 
-function Pricing({ userId }: { userId: string | null }) {
+function Pricing() {
 
   return (
     <section className="py-20 bg-muted/20">
@@ -668,7 +668,7 @@ function Pricing({ userId }: { userId: string | null }) {
         </div>
 
         <div className="max-w-5xl mx-auto">
-          <PricingTable userId={userId} />
+          <PricingTable />
         </div>
 
         <div className="text-center mt-12">

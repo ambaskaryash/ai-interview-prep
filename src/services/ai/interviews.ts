@@ -35,10 +35,8 @@ export async function generateAiInterviewFeedback({
     .filter(f => f != null)
 
   const { text } = await generateText({
-    model: google("gemini-2.5-flash"),
+    model: google("gemini-2.5-flash") as any, // Explicitly cast to any to bypass type mismatch
     prompt: JSON.stringify(formattedMessages),
-    maxSteps: 10,
-    experimental_continueSteps: true,
     system: `You are an expert interview coach and evaluator. Your role is to analyze a mock job interview transcript and provide clear, detailed, and structured feedback on the interviewee's performance based on the job requirements. Your output should be in markdown format.
   
 ---

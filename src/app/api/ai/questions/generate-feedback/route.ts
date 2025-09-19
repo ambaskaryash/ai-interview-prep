@@ -5,7 +5,7 @@ import { getQuestionIdTag } from "@/features/questions/dbCache"
 import { generateAiQuestionFeedback } from "@/services/ai/questions"
 import { getCurrentUser } from "@/services/clerk/lib/getCurrentUser"
 import { eq } from "drizzle-orm"
-import { cacheTag } from "next/dist/server/use-cache/cache-tag"
+import { unstable_cache as cache } from "next/cache"
 import z from "zod"
 
 const schema = z.object({
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     return new Response("You are not logged in", { status: 401 })
   }
 
-  const question = await getQuestion(questionId, userId)
+  const question = await (await getQuestion(questionId, userId))()
   if (question == null) {
     return new Response("You do not have permission to do this", {
       status: 403,
@@ -40,21 +40,25 @@ export async function POST(req: Request) {
     answer,
   })
 
-  return res.toDataStreamResponse({ sendUsage: false })
+  return res.toTextStreamResponse()
 }
 
 async function getQuestion(id: string, userId: string) {
-  "use cache"
-  cacheTag(getQuestionIdTag(id))
-
+  return cache(async () => {
   const question = await db.query.QuestionTable.findFirst({
     where: eq(QuestionTable.id, id),
     with: { jobInfo: { columns: { id: true, userId: true } } },
   })
 
   if (question == null) return null
-  cacheTag(getJobInfoIdTag(question.jobInfo.id))
+  
 
   if (question.jobInfo.userId !== userId) return null
   return question
+  },
+    [`getQuestion-${id}-${userId}`],
+    {
+      tags: [getQuestionIdTag(id), getJobInfoIdTag(id)],
+    },
+  )
 }
