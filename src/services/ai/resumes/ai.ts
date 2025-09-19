@@ -19,13 +19,10 @@ export async function analyzeResumeForJob({
     messages: [
       {
         role: "user",
-        content: [
-          {
-            type: "file",
-            data: await resumeFile.arrayBuffer(),
-            mediaType: resumeFile.type,
-          },
-        ],
+        content: `Here is the resume file (base64 encoded):
+data:${resumeFile.type};base64,${Buffer.from(await resumeFile.arrayBuffer()).toString("base64")}
+
+Please analyze this resume against the job requirements.`,
       },
     ],
     system: `You are an expert resume reviewer and hiring advisor.
