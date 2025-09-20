@@ -1,9 +1,5 @@
 import { ComponentProps } from "react"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "../../../components/ui/avatar"
+import { Avatar } from "@chakra-ui/react"
 
 export function UserAvatar({
   user,
@@ -11,16 +7,19 @@ export function UserAvatar({
 }: {
   user: { name: string; imageUrl: string }
 } & ComponentProps<typeof Avatar>) {
+  const initials = user.name
+    .split(" ")
+    .slice(0, 2)
+    .map(n => n[0])
+    .join("").toUpperCase()
+    
   return (
-    <Avatar {...props}>
-      <AvatarImage src={user.imageUrl} alt={user.name} />
-      <AvatarFallback textTransform="uppercase">
-        {user.name
-          .split(" ")
-          .slice(0, 2)
-          .map(n => n[0])
-          .join("")}
-      </AvatarFallback>
+    <Avatar 
+      src={user.imageUrl} 
+      name={user.name}
+      {...props}
+    >
+      {initials}
     </Avatar>
   )
 }

@@ -19,7 +19,6 @@ import { and, eq } from "drizzle-orm"
 import { cacheTag } from "next/dist/server/use-cache/cache-tag"
 import { notFound } from "next/navigation"
 import { OptionsGrid } from "./_components/OptionsGrid"
-import { InterviewDebug } from "@/components/debug/InterviewDebug"
 
 
 export default async function JobInfoPage({
@@ -101,7 +100,6 @@ export default async function JobInfoPage({
           </Box>
 
           <OptionsGrid jobInfoId={jobInfoId} />
-          <InterviewDebug jobInfoId={jobInfoId} />
         </VStack>
       </VStack>
     </Container>

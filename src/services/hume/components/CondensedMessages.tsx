@@ -41,10 +41,10 @@ export function CondensedMessages({
             p={4}
             border="1px"
             borderColor="gray.200"
-            _dark={{ borderColor: "gray.600" }}
             borderRadius="lg"
             bg={message.isUser ? "brand.50" : "white"}
             _dark={{
+              borderColor: "gray.600",
               bg: message.isUser ? "brand.900" : "gray.800"
             }}
           >

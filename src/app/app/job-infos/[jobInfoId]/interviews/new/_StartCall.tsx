@@ -244,11 +244,10 @@ function Controls() {
       borderRadius="xl" 
       border="1px" 
       borderColor="gray.200"
-      _dark={{ borderColor: "gray.700" }}
       px={5} 
       py={3} 
       bg="white"
-      _dark={{ bg: "gray.800" }}
+      _dark={{ borderColor: "gray.700", bg: "gray.800" }}
       boxShadow="lg"
       position="sticky"
       bottom={6}
