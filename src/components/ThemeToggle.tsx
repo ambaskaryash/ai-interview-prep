@@ -1,10 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { useTheme } from "next-themes"
+import { useColorMode } from "@chakra-ui/react"
 import { Monitor, Moon, Sun } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useEffect, useState } from "react"
-import { cn } from "@/lib/utils"
+import { Icon, Box } from "@chakra-ui/react"
 
 const themes = [
   {
@@ -25,16 +24,11 @@ const themes = [
     Icon: Moon,
     value: "dark",
   },
-  {
-    name: "System",
-    Icon: Monitor,
-    value: "system",
-  },
 ] as const
 
 export function ThemeToggle() {
   const [mounted, setMounted] = useState(false)
-  const { setTheme, theme, resolvedTheme } = useTheme()
+  const { colorMode, toggleColorMode } = useColorMode()
 
   useEffect(() => {
     setMounted(true)
@@ -44,23 +38,28 @@ export function ThemeToggle() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
-          {resolvedTheme === "dark" ? <Moon /> : <Sun />}
-          <span className="sr-only">Toggle theme</span>
-        </Button>
+      <DropdownMenuTrigger 
+        variant="ghost"
+        size="sm"
+        p={2}
+        _hover={{ bg: 'gray.100', _dark: { bg: 'gray.700' } }}
+        transition="all 0.2s"
+      >
+        <Icon as={colorMode === "dark" ? Moon : Sun} />
+        <Box srOnly>Toggle theme</Box>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {themes.map(({ name, Icon, value }) => (
+      <DropdownMenuContent>
+        {themes.map(({ name, Icon: IconComponent, value }) => (
           <DropdownMenuItem
             key={value}
-            onClick={() => setTheme(value)}
-            className={cn(
-              "cursor-pointer",
-              theme === value && "bg-accent text-accent-foreground"
-            )}
+            onClick={() => {
+              if (value === "light" && colorMode === "dark") toggleColorMode()
+              if (value === "dark" && colorMode === "light") toggleColorMode()
+            }}
+            bg={colorMode === value ? "purple.100" : "transparent"}
+            _dark={{ bg: colorMode === value ? "purple.900" : "transparent" }}
           >
-            <Icon className="size-4" />
+            <Icon as={IconComponent} mr={2} />
             {name}
           </DropdownMenuItem>
         ))}

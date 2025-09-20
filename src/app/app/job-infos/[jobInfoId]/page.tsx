@@ -1,49 +1,26 @@
 import { BackLink } from "@/components/BackLink"
 import { Skeleton } from "@/components/Skeleton"
 import { SuspendedItem } from "@/components/SuspendedItem"
-import { Badge } from "@/components/ui/badge"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { 
+  Badge,
+  Container,
+  VStack,
+  HStack,
+  Heading,
+  Text,
+  Box
+} from "@chakra-ui/react"
 import { db } from "@/drizzle/db"
 import { JobInfoTable } from "@/drizzle/schema"
 import { getJobInfoIdTag } from "@/features/jobInfos/dbCache"
 import { formatExperienceLevel } from "@/features/jobInfos/lib/formatters"
 import { getCurrentUser } from "@/services/clerk/lib/getCurrentUser"
 import { and, eq } from "drizzle-orm"
-import { ArrowRightIcon } from "lucide-react"
 import { cacheTag } from "next/dist/server/use-cache/cache-tag"
-import Link from "next/link"
 import { notFound } from "next/navigation"
+import { OptionsGrid } from "./_components/OptionsGrid"
+import { InterviewDebug } from "@/components/debug/InterviewDebug"
 
-const options = [
-  {
-    label: "Answer Technical Questions",
-    description:
-      "Challenge yourself with practice questions tailored to your job description.",
-    href: "questions",
-  },
-  {
-    label: "Practice Interviewing",
-    description: "Simulate a real interview with AI-powered mock interviews.",
-    href: "interviews",
-  },
-  {
-    label: "Refine Your Resume",
-    description:
-      "Get expert feedback on your resume and improve your chances of landing an interview.",
-    href: "resume",
-  },
-  {
-    label: "Update Job Description",
-    description: "This should only be used for minor updates.",
-    href: "edit",
-  },
-]
 
 export default async function JobInfoPage({
   params,
@@ -64,68 +41,70 @@ export default async function JobInfoPage({
   )
 
   return (
-    <div className="container my-4 space-y-4">
-      <BackLink href="/app">Dashboard</BackLink>
+    <Container maxW="6xl" px={{ base: 4, md: 6 }}>
+      <VStack spacing={8} align="stretch">
+        <BackLink href="/app">Dashboard</BackLink>
 
-      <div className="space-y-6">
-        <header className="space-y-4">
-          <div className="space-y-2">
-            <h1 className="text-3xl md:text-4xl">
-              <SuspendedItem
-                item={jobInfo}
-                fallback={<Skeleton className="w-48" />}
-                result={j => j.name}
-              />
-            </h1>
-            <div className="flex gap-2">
-              <SuspendedItem
-                item={jobInfo}
-                fallback={<Skeleton className="w-12" />}
-                result={j => (
-                  <Badge variant="secondary">
-                    {formatExperienceLevel(j.experienceLevel)}
-                  </Badge>
-                )}
-              />
-              <SuspendedItem
-                item={jobInfo}
-                fallback={null}
-                result={j => {
-                  return j.title && <Badge variant="secondary">{j.title}</Badge>
-                }}
-              />
-            </div>
-          </div>
-          <p className="text-muted-foreground line-clamp-3">
-            <SuspendedItem
-              item={jobInfo}
-              fallback={<Skeleton className="w-96" />}
-              result={j => j.description}
-            />
-          </p>
-        </header>
+        <VStack spacing={6} align="stretch">
+          <Box as="header">
+            <VStack align="start" spacing={4}>
+              <VStack align="start" spacing={2}>
+                <Heading 
+                  as="h1" 
+                  size={{ base: 'xl', md: '2xl' }}
+                  color="gray.800"
+                  _dark={{ color: 'white' }}
+                >
+                  <SuspendedItem
+                    item={jobInfo}
+                    fallback={<Skeleton className="w-48 h-8" />}
+                    result={j => j.name}
+                  />
+                </Heading>
+                <HStack spacing={2} flexWrap="wrap">
+                  <SuspendedItem
+                    item={jobInfo}
+                    fallback={<Skeleton className="w-12 h-6" />}
+                    result={j => (
+                      <Badge colorScheme="purple" variant="subtle">
+                        {formatExperienceLevel(j.experienceLevel)}
+                      </Badge>
+                    )}
+                  />
+                  <SuspendedItem
+                    item={jobInfo}
+                    fallback={null}
+                    result={j => {
+                      return j.title && (
+                        <Badge colorScheme="blue" variant="subtle">
+                          {j.title}
+                        </Badge>
+                      )
+                    }}
+                  />
+                </HStack>
+              </VStack>
+              <Text 
+                color="gray.600" 
+                _dark={{ color: 'gray.300' }}
+                fontSize={{ base: 'md', md: 'lg' }}
+                noOfLines={3}
+                lineHeight="1.7"
+              >
+                <SuspendedItem
+                  item={jobInfo}
+                  fallback={<Skeleton className="w-96 h-6" />}
+                  result={j => j.description}
+                />
+              </Text>
+            </VStack>
+          </Box>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 has-hover:*:not-hover:opacity-70">
-          {options.map(option => (
-            <Link
-              className="hover:scale-[1.02] transition-[transform_opacity]"
-              href={`/app/job-infos/${jobInfoId}/${option.href}`}
-              key={option.href}
-            >
-              <Card className="h-full flex items-start justify-between flex-row">
-                <CardHeader className="flex-grow">
-                  <CardTitle>{option.label}</CardTitle>
-                  <CardDescription>{option.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ArrowRightIcon className="size-6" />
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </div>
-    </div>
+          <OptionsGrid jobInfoId={jobInfoId} />
+          <InterviewDebug jobInfoId={jobInfoId} />
+        </VStack>
+      </VStack>
+    </Container>
   )
 }
 

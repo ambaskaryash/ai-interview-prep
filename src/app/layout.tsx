@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { Outfit } from "next/font/google"
 import "./globals.css"
 import { ClerkProvider } from "@/services/clerk/components/ClerkProvider"
-import { ThemeProvider } from "next-themes"
+import { ChakraProviderWrapper } from '@/components/providers/ChakraProvider'
 import { Toaster } from "@/components/ui/sonner"
 
 const outfitSans = Outfit({
@@ -50,16 +50,11 @@ export default function RootLayout({
         <head>
           <link rel="icon" href="/favicon.ico" />
         </head>
-        <body className={`${outfitSans.variable} antialiased font-sans`}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableColorScheme
-            disableTransitionOnChange
-          >
+        <body className={outfitSans.variable}>
+          <ChakraProviderWrapper>
             {children}
             <Toaster />
-          </ThemeProvider>
+          </ChakraProviderWrapper>
         </body>
       </html>
     </ClerkProvider>

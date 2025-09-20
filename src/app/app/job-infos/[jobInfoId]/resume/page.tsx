@@ -1,8 +1,8 @@
 import { JobInfoBackLink } from "@/features/jobInfos/components/JobInfoBackLink"
 import { canRunResumeAnalysis } from "@/features/resumeAnalyses/permissions"
-import { Loader2Icon } from "lucide-react"
 import { redirect } from "next/navigation"
 import { Suspense } from "react"
+import { Container, VStack, Spinner, Box } from "@chakra-ui/react"
 import { ResumePageClient } from "./_client"
 
 export default async function ResumePage({
@@ -13,14 +13,20 @@ export default async function ResumePage({
   const { jobInfoId } = await params
 
   return (
-    <div className="container py-4 space-y-4 h-screen-header flex flex-col items-start">
-      <JobInfoBackLink jobInfoId={jobInfoId} />
-      <Suspense
-        fallback={<Loader2Icon className="animate-spin size-24 m-auto" />}
-      >
-        <SuspendedComponent jobInfoId={jobInfoId} />
-      </Suspense>
-    </div>
+    <Container maxW="6xl" px={{ base: 4, md: 6 }}>
+      <VStack spacing={6} align="stretch" py={4}>
+        <JobInfoBackLink jobInfoId={jobInfoId} />
+        <Suspense
+          fallback={
+            <Box display="flex" justifyContent="center" alignItems="center" py={12}>
+              <Spinner size="xl" thickness="4px" speed="0.65s" color="brand.500" />
+            </Box>
+          }
+        >
+          <SuspendedComponent jobInfoId={jobInfoId} />
+        </Suspense>
+      </VStack>
+    </Container>
   )
 }
 

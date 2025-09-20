@@ -1,6 +1,17 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
+import { 
+  Box,
+  VStack,
+  Container,
+  Button,
+  Flex,
+  Text,
+  Spinner,
+  IconButton,
+  HStack,
+  Center
+} from "@chakra-ui/react"
 import { env } from "@/data/env/client"
 import { JobInfoTable } from "@/drizzle/schema"
 import { createInterview, updateInterview } from "@/features/interviews/actions"
@@ -69,34 +80,102 @@ export function StartCall({
 
   if (readyState === VoiceReadyState.IDLE) {
     return (
-      <div className="flex justify-center items-center h-screen-header">
-        <Button
-          size="lg"
-          onClick={async () => {
-            const res = await createInterview({ jobInfoId: jobInfo.id })
-            if (res.error) {
-              return errorToast(res.message)
-            }
-            setInterviewId(res.id)
-
-            connect({
-              auth: { type: "accessToken", value: accessToken },
-              configId: env.NEXT_PUBLIC_HUME_CONFIG_ID,
-              sessionSettings: {
-                type: "session_settings",
-                variables: {
-                  userName: user.name,
-                  title: jobInfo.title || "Not Specified",
-                  description: jobInfo.description,
-                  experienceLevel: jobInfo.experienceLevel,
-                },
-              },
-            })
-          }}
+      <Container maxW="2xl" centerContent>
+        <VStack 
+          spacing={8} 
+          align="center" 
+          justify="center" 
+          minH="calc(100vh - 4rem)"
+          textAlign="center"
         >
-          Start Interview
-        </Button>
-      </div>
+          <VStack spacing={4}>
+            <Text 
+              fontSize={{ base: "2xl", md: "3xl" }} 
+              fontWeight="bold" 
+              color="gray.800"
+              _dark={{ color: "white" }}
+            >
+              Ready to Start Your Interview?
+            </Text>
+            <Text 
+              fontSize={{ base: "md", md: "lg" }} 
+              color="gray.600"
+              _dark={{ color: "gray.300" }}
+              maxW="md"
+              lineHeight="1.6"
+            >
+              This is an AI-powered mock interview for the position: 
+              <Text as="span" fontWeight="semibold" color="brand.500">
+                {jobInfo.title || "Software Developer"}
+              </Text>
+            </Text>
+          </VStack>
+          
+          <Button
+            size="lg"
+            colorScheme="brand"
+            px={8}
+            py={6}
+            fontSize="lg"
+            fontWeight="semibold"
+            borderRadius="xl"
+            boxShadow="lg"
+            _hover={{ 
+              transform: "translateY(-2px)", 
+              boxShadow: "xl" 
+            }}
+            transition="all 0.3s ease"
+            onClick={async () => {
+              try {
+                console.log("Starting interview creation for jobInfo:", jobInfo.id)
+                const res = await createInterview({ jobInfoId: jobInfo.id })
+                console.log("Interview creation result:", res)
+                
+                if (res.error) {
+                  console.error("Interview creation error:", res.message)
+                  return errorToast(res.message)
+                }
+                setInterviewId(res.id)
+                console.log("Interview created with ID:", res.id)
+
+                console.log("Attempting to connect to Hume with config:", {
+                  configId: env.NEXT_PUBLIC_HUME_CONFIG_ID,
+                  hasAccessToken: !!accessToken,
+                  accessTokenLength: accessToken?.length || 0
+                })
+
+                connect({
+                  auth: { type: "accessToken", value: accessToken },
+                  configId: env.NEXT_PUBLIC_HUME_CONFIG_ID,
+                  sessionSettings: {
+                    type: "session_settings",
+                    variables: {
+                      userName: user.name,
+                      title: jobInfo.title || "Not Specified",
+                      description: jobInfo.description,
+                      experienceLevel: jobInfo.experienceLevel,
+                    },
+                  },
+                })
+                console.log("Connect function called")
+              } catch (error) {
+                console.error("Error in interview start:", error)
+                errorToast("Failed to start interview: " + (error instanceof Error ? error.message : String(error)))
+              }
+            }}
+          >
+            Start Interview
+          </Button>
+          
+          <Text 
+            fontSize="sm" 
+            color="gray.500"
+            _dark={{ color: "gray.400" }}
+          >
+            Make sure your microphone is enabled and you're in a quiet environment.
+          </Text>
+        </VStack>
+      </Container>
     )
   }
 
@@ -105,19 +184,36 @@ export function StartCall({
     readyState === VoiceReadyState.CLOSED
   ) {
     return (
-      <div className="h-screen-header flex items-center justify-center">
-        <Loader2Icon className="animate-spin size-24" />
-      </div>
+      <Center minH="calc(100vh - 4rem)">
+        <VStack spacing={4}>
+          <Spinner size="xl" thickness="4px" speed="0.65s" color="brand.500" />
+          <Text color="gray.600" _dark={{ color: "gray.300" }} fontSize="lg">
+            {readyState === VoiceReadyState.CONNECTING 
+              ? "Connecting to interview..."
+              : "Ending interview..."
+            }
+          </Text>
+        </VStack>
+      </Center>
     )
   }
 
   return (
-    <div className="overflow-y-auto h-screen-header flex flex-col-reverse">
-      <div className="container py-6 flex flex-col items-center justify-end gap-4">
-        <Messages user={user} />
-        <Controls />
-      </div>
-    </div>
+    <Box 
+      overflowY="auto" 
+      h="calc(100vh - 4rem)" 
+      display="flex" 
+      flexDirection="column-reverse"
+      bg="gray.50"
+      _dark={{ bg: "gray.900" }}
+    >
+      <Container maxW="4xl" py={6} centerContent>
+        <VStack spacing={6} w="full">
+          <Messages user={user} />
+          <Controls />
+        </VStack>
+      </Container>
+    </Box>
   )
 }
 
@@ -143,48 +239,81 @@ function Controls() {
     useVoice()
 
   return (
-    <div className="flex gap-5 rounded border px-5 py-2 w-fit sticky bottom-6 bg-background items-center">
-      <Button
+    <HStack 
+      spacing={5} 
+      borderRadius="xl" 
+      border="1px" 
+      borderColor="gray.200"
+      _dark={{ borderColor: "gray.700" }}
+      px={5} 
+      py={3} 
+      bg="white"
+      _dark={{ bg: "gray.800" }}
+      boxShadow="lg"
+      position="sticky"
+      bottom={6}
+    >
+      <IconButton
         variant="ghost"
-        size="icon"
-        className="-mx-3"
+        size="md"
+        icon={isMuted ? <MicOffIcon /> : <MicIcon />}
         onClick={() => (isMuted ? unmute() : mute())}
-      >
-        {isMuted ? <MicOffIcon className="text-destructive" /> : <MicIcon />}
-        <span className="sr-only">{isMuted ? "Unmute" : "Mute"}</span>
-      </Button>
-      <div className="self-stretch">
+        aria-label={isMuted ? "Unmute" : "Mute"}
+        color={isMuted ? "red.500" : "gray.600"}
+        _hover={{ 
+          bg: isMuted ? "red.50" : "gray.50",
+          _dark: { bg: isMuted ? "red.900" : "gray.700" }
+        }}
+      />
+      
+      <Box h="40px" w="120px" display="flex" alignItems="center">
         <FftVisualizer fft={micFft} />
-      </div>
-      <div className="text-sm text-muted-foreground tabular-nums">
-        {callDurationTimestamp}
-      </div>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="-mx-3"
-        onClick={disconnect}
+      </Box>
+      
+      <Text 
+        fontSize="sm" 
+        color="gray.500"
+        _dark={{ color: "gray.400" }}
+        fontFamily="mono"
+        minW="16"
       >
-        <PhoneOffIcon className="text-destructive" />
-        <span className="sr-only">End Call</span>
-      </Button>
-    </div>
+        {callDurationTimestamp}
+      </Text>
+      
+      <IconButton
+        variant="ghost"
+        size="md"
+        icon={<PhoneOffIcon />}
+        onClick={disconnect}
+        aria-label="End Call"
+        color="red.500"
+        _hover={{ 
+          bg: "red.50",
+          _dark: { bg: "red.900" }
+        }}
+      />
+    </HStack>
   )
 }
 
 function FftVisualizer({ fft }: { fft: number[] }) {
   return (
-    <div className="flex gap-1 items-center h-full">
+    <Flex gap={1} alignItems="center" h="full" justify="center">
       {fft.map((value, index) => {
         const percent = (value / 4) * 100
         return (
-          <div
+          <Box
             key={index}
-            className="min-h-0.5 bg-primary/75 w-0.5 rounded"
-            style={{ height: `${percent < 10 ? 0 : percent}%` }}
+            minH="2px"
+            bg="brand.400"
+            w="2px"
+            borderRadius="sm"
+            h={`${percent < 10 ? 0 : percent}%`}
+            opacity={0.75}
+            transition="height 0.1s ease"
           />
         )
       })}
-    </div>
+    </Flex>
   )
 }

@@ -7,14 +7,19 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Badge } from "@/components/ui/badge"
-import {
+import { 
+  Badge,
   Card,
-  CardContent,
-  CardDescription,
+  CardBody,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+  VStack,
+  Text,
+  Heading,
+  Box,
+  Flex,
+  Icon,
+  Input
+} from "@chakra-ui/react"
 import { LoadingSwap } from "@/components/ui/loading-swap"
 import { cn } from "@/lib/utils"
 import { aiAnalyzeSchema } from "@/services/ai/resumes/schemas"
@@ -80,19 +85,19 @@ export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
   }
 
   return (
-    <div className="space-y-8 w-full">
-      <Card>
+    <VStack spacing={8} align="stretch" w="full">
+      <Card variant="elevated">
         <CardHeader>
-          <CardTitle>
+          <Heading as="h2" size="lg" color="gray.800" _dark={{ color: 'white' }}>
             {isLoading ? "Analyzing your resume" : "Upload your resume"}
-          </CardTitle>
-          <CardDescription>
+          </Heading>
+          <Text color="gray.600" _dark={{ color: 'gray.300' }} fontSize="md">
             {isLoading
               ? "This may take a couple minutes"
               : "Get personalized feedback on your resume based on the job"}
-          </CardDescription>
+          </Text>
         </CardHeader>
-        <CardContent>
+        <CardBody>
           <LoadingSwap loadingIconClassName="size-16" isLoading={isLoading}>
             <div
               className={cn(
@@ -127,24 +132,24 @@ export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
                   handleFileUpload(e.target.files?.[0] ?? null)
                 }}
               />
-              <div className="flex flex-col items-center justify-center text-center gap-4">
-                <UploadIcon className="size-12 text-muted-foreground" />
-                <div className="space-y-2">
-                  <p className="text-lg">
+              <VStack spacing={4} align="center" justify="center" textAlign="center">
+                <Icon as={UploadIcon} boxSize={12} color="gray.500" />
+                <VStack spacing={2}>
+                  <Text fontSize="lg" color="gray.700" _dark={{ color: 'gray.200' }}>
                     Drag your resume here or click to upload
-                  </p>
-                  <p className="text-xs text-muted-foreground">
+                  </Text>
+                  <Text fontSize="xs" color="gray.500" _dark={{ color: 'gray.400' }}>
                     Supported formats: PDF, Word docs, and text files
-                  </p>
-                </div>
-              </div>
+                  </Text>
+                </VStack>
+              </VStack>
             </div>
           </LoadingSwap>
-        </CardContent>
+        </CardBody>
       </Card>
 
       <AnalysisResults aiAnalysis={aiAnalysis} isLoading={isLoading} />
-    </div>
+    </VStack>
   )
 }
 
@@ -168,18 +173,20 @@ function AnalysisResults({
   }
 
   return (
-    <Card>
+    <Card variant="elevated">
       <CardHeader>
-        <CardTitle>Analysis Results</CardTitle>
-        <CardDescription>
+        <Heading as="h2" size="lg" color="gray.800" _dark={{ color: 'white' }}>
+          Analysis Results
+        </Heading>
+        <Text color="gray.600" _dark={{ color: 'gray.300' }} fontSize="md">
           {aiAnalysis?.overallScore == null ? (
             <Skeleton className="w-32" />
           ) : (
             `Overall Score: ${aiAnalysis.overallScore}/10`
           )}
-        </CardDescription>
+        </Text>
       </CardHeader>
-      <CardContent>
+      <CardBody>
         <Accordion type="multiple">
           {Object.entries(sections).map(([key, title]) => {
             const category = aiAnalysis?.[key as Keys]
@@ -225,7 +232,7 @@ function AnalysisResults({
             )
           })}
         </Accordion>
-      </CardContent>
+      </CardBody>
     </Card>
   )
 }

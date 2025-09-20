@@ -1,92 +1,139 @@
-import * as React from "react"
+import { Box, BoxProps, Heading, Text, VStack } from '@chakra-ui/react'
+import { forwardRef, ReactNode } from 'react'
 
-import { cn } from "@/lib/utils"
-
-function Card({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card"
-      className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
-        className
-      )}
-      {...props}
-    />
-  )
+interface CardProps extends BoxProps {
+  variant?: 'elevated' | 'glass' | 'solid'
+  children: ReactNode
 }
 
-function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-header"
-      className={cn(
-        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
-        className
-      )}
-      {...props}
-    />
-  )
+export const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ children, variant = 'elevated', ...props }, ref) => {
+    return (
+      <Box
+        ref={ref}
+        borderRadius="2xl"
+        p={8}
+        bg="whiteAlpha.900"
+        backdropFilter="blur(20px)"
+        borderWidth="1px"
+        borderColor="whiteAlpha.300"
+        boxShadow="xl"
+        _dark={{
+          bg: 'blackAlpha.300',
+          borderColor: 'whiteAlpha.100',
+        }}
+        _hover={{
+          transform: variant === 'elevated' ? 'translateY(-4px)' : 'none',
+          boxShadow: variant === 'elevated' ? '3xl' : 'xl',
+        }}
+        transition="all 0.3s ease"
+        {...props}
+      >
+        {children}
+      </Box>
+    )
+  }
+)
+
+Card.displayName = 'Card'
+
+interface CardHeaderProps extends BoxProps {
+  children: ReactNode
 }
 
-function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-title"
-      className={cn("leading-none font-semibold", className)}
-      {...props}
-    />
-  )
+export const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(
+  ({ children, ...props }, ref) => {
+    return (
+      <Box ref={ref} mb={6} {...props}>
+        {children}
+      </Box>
+    )
+  }
+)
+
+CardHeader.displayName = 'CardHeader'
+
+interface CardTitleProps extends BoxProps {
+  children: ReactNode
 }
 
-function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-description"
-      className={cn("text-muted-foreground text-sm", className)}
-      {...props}
-    />
-  )
+export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
+  ({ children, ...props }, ref) => {
+    return (
+      <Heading
+        ref={ref as any}
+        size="lg"
+        fontWeight="bold"
+        mb={3}
+        letterSpacing="-0.02em"
+        {...props}
+      >
+        {children}
+      </Heading>
+    )
+  }
+)
+
+CardTitle.displayName = 'CardTitle'
+
+interface CardDescriptionProps extends BoxProps {
+  children: ReactNode
 }
 
-function CardAction({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-action"
-      className={cn(
-        "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
-        className
-      )}
-      {...props}
-    />
-  )
+export const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionProps>(
+  ({ children, ...props }, ref) => {
+    return (
+      <Text
+        ref={ref as any}
+        color="gray.600"
+        _dark={{ color: 'gray.400' }}
+        lineHeight="1.7"
+        {...props}
+      >
+        {children}
+      </Text>
+    )
+  }
+)
+
+CardDescription.displayName = 'CardDescription'
+
+interface CardContentProps extends BoxProps {
+  children: ReactNode
 }
 
-function CardContent({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-content"
-      className={cn("px-6", className)}
-      {...props}
-    />
-  )
+export const CardContent = forwardRef<HTMLDivElement, CardContentProps>(
+  ({ children, ...props }, ref) => {
+    return (
+      <Box ref={ref} {...props}>
+        {children}
+      </Box>
+    )
+  }
+)
+
+CardContent.displayName = 'CardContent'
+
+interface CardFooterProps extends BoxProps {
+  children: ReactNode
 }
 
-function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-footer"
-      className={cn("flex items-center px-6 [.border-t]:pt-6", className)}
-      {...props}
-    />
-  )
-}
+export const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>(
+  ({ children, ...props }, ref) => {
+    return (
+      <Box
+        ref={ref}
+        mt={6}
+        pt={6}
+        borderTopWidth="1px"
+        borderColor="gray.200"
+        _dark={{ borderColor: 'gray.600' }}
+        {...props}
+      >
+        {children}
+      </Box>
+    )
+  }
+)
 
-export {
-  Card,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardAction,
-  CardDescription,
-  CardContent,
-}
+CardFooter.displayName = 'CardFooter'

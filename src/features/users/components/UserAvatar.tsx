@@ -14,7 +14,7 @@ export function UserAvatar({
   return (
     <Avatar {...props}>
       <AvatarImage src={user.imageUrl} alt={user.name} />
-      <AvatarFallback className="uppercase">
+      <AvatarFallback textTransform="uppercase">
         {user.name
           .split(" ")
           .slice(0, 2)

@@ -1,28 +1,22 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 import { experienceLevels, JobInfoTable } from "@/drizzle/schema/jobInfo"
-import { Button } from "@/components/ui/button"
-import {
-  Form,
+import { 
+  VStack, 
+  SimpleGrid,
   FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
   FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import {
+  FormErrorMessage,
+  FormHelperText,
+  Input,
+  Textarea,
   Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+  Button,
+  Box
+} from '@chakra-ui/react'
 import { jobInfoSchema } from "../schemas"
 import { formatExperienceLevel } from "../lib/formatters"
 import { LoadingSwap } from "@/components/ui/loading-swap"
@@ -61,105 +55,107 @@ export function JobInfoForm({
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormDescription>
-                This name is displayed in the UI for easy identification.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
+    <Box as="form" onSubmit={form.handleSubmit(onSubmit)}>
+      <VStack spacing={6} align="stretch">
+        <FormControl isInvalid={!!form.formState.errors.name}>
+          <FormLabel>Name</FormLabel>
+          <Input 
+            {...form.register("name")}
+            placeholder="e.g., Frontend Developer Position"
+          />
+          <FormHelperText>
+            This name is displayed in the UI for easy identification.
+          </FormHelperText>
+          {form.formState.errors.name && (
+            <FormErrorMessage>
+              {form.formState.errors.name.message}
+            </FormErrorMessage>
           )}
-        />
+        </FormControl>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Job Title</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    value={field.value ?? ""}
-                    onChange={e => field.onChange(e.target.value || null)}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Optional. Only enter if there is a specific job title you are
-                  applying for.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="experienceLevel"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Experience Level</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {experienceLevels.map(level => (
-                      <SelectItem key={level} value={level}>
-                        {formatExperienceLevel(level)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="A Next.js 15 and React 19 full stack web developer job that uses Drizzle ORM and Postgres for database management."
+        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
+          <FormControl isInvalid={!!form.formState.errors.title}>
+            <FormLabel>Job Title</FormLabel>
+            <Controller
+              name="title"
+              control={form.control}
+              render={({ field }) => (
+                <Input 
                   {...field}
+                  value={field.value || ""}
+                  onChange={(e) => field.onChange(e.target.value || null)}
+                  placeholder="e.g., Senior Frontend Developer"
                 />
-              </FormControl>
-              <FormDescription>
-                Be as specific as possible. The more information you provide,
-                the better the interviews will be.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
+              )}
+            />
+            <FormHelperText>
+              Optional. Only enter if there is a specific job title you are
+              applying for.
+            </FormHelperText>
+            {form.formState.errors.title && (
+              <FormErrorMessage>
+                {form.formState.errors.title.message}
+              </FormErrorMessage>
+            )}
+          </FormControl>
+
+          <FormControl isInvalid={!!form.formState.errors.experienceLevel}>
+            <FormLabel>Experience Level</FormLabel>
+            <Controller
+              name="experienceLevel"
+              control={form.control}
+              render={({ field }) => (
+                <Select 
+                  {...field}
+                  placeholder="Select experience level"
+                >
+                  {experienceLevels.map(level => (
+                    <option key={level} value={level}>
+                      {formatExperienceLevel(level)}
+                    </option>
+                  ))}
+                </Select>
+              )}
+            />
+            {form.formState.errors.experienceLevel && (
+              <FormErrorMessage>
+                {form.formState.errors.experienceLevel.message}
+              </FormErrorMessage>
+            )}
+          </FormControl>
+        </SimpleGrid>
+
+        <FormControl isInvalid={!!form.formState.errors.description}>
+          <FormLabel>Description</FormLabel>
+          <Textarea
+            {...form.register("description")}
+            placeholder="A Next.js 15 and React 19 full stack web developer job that uses Drizzle ORM and Postgres for database management."
+            rows={6}
+            resize="vertical"
+          />
+          <FormHelperText>
+            Be as specific as possible. The more information you provide,
+            the better the interviews will be.
+          </FormHelperText>
+          {form.formState.errors.description && (
+            <FormErrorMessage>
+              {form.formState.errors.description.message}
+            </FormErrorMessage>
           )}
-        />
+        </FormControl>
 
         <Button
-          disabled={form.formState.isSubmitting}
+          isDisabled={form.formState.isSubmitting}
           type="submit"
-          className="w-full"
+          w="full"
+          colorScheme="brand"
+          size="lg"
         >
           <LoadingSwap isLoading={form.formState.isSubmitting}>
-            Save Job Information
+            {jobInfo ? "Update Job Information" : "Save Job Information"}
           </LoadingSwap>
         </Button>
-      </form>
-    </Form>
+      </VStack>
+    </Box>
   )
 }

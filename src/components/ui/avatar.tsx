@@ -1,53 +1,13 @@
-"use client"
+import { Avatar as ChakraAvatar, AvatarProps } from '@chakra-ui/react'
+import { forwardRef } from 'react'
 
-import * as React from "react"
-import * as AvatarPrimitive from "@radix-ui/react-avatar"
+export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
+  (props, ref) => {
+    return <ChakraAvatar ref={ref} {...props} />
+  }
+)
 
-import { cn } from "@/lib/utils"
+Avatar.displayName = 'Avatar'
 
-function Avatar({
-  className,
-  ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Root>) {
-  return (
-    <AvatarPrimitive.Root
-      data-slot="avatar"
-      className={cn(
-        "relative flex size-8 shrink-0 overflow-hidden rounded-full",
-        className
-      )}
-      {...props}
-    />
-  )
-}
-
-function AvatarImage({
-  className,
-  ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Image>) {
-  return (
-    <AvatarPrimitive.Image
-      data-slot="avatar-image"
-      className={cn("aspect-square size-full", className)}
-      {...props}
-    />
-  )
-}
-
-function AvatarFallback({
-  className,
-  ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
-  return (
-    <AvatarPrimitive.Fallback
-      data-slot="avatar-fallback"
-      className={cn(
-        "bg-primary/10 text-primary flex size-full items-center justify-center rounded-full",
-        className
-      )}
-      {...props}
-    />
-  )
-}
-
-export { Avatar, AvatarImage, AvatarFallback }
+export const AvatarFallback = ({ children }: { children: React.ReactNode }) => <>{children}</>
+export const AvatarImage = ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />

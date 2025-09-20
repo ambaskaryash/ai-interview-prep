@@ -3,13 +3,13 @@ import { JobInfoTable } from "@/drizzle/schema"
 import { getJobInfoIdTag } from "@/features/jobInfos/dbCache"
 import { getCurrentUser } from "@/services/clerk/lib/getCurrentUser"
 import { and, eq } from "drizzle-orm"
-import { Loader2Icon } from "lucide-react"
 import { cacheTag } from "next/dist/server/use-cache/cache-tag"
 import { notFound, redirect } from "next/navigation"
 import { Suspense } from "react"
 import { fetchAccessToken } from "hume"
 import { env } from "@/data/env/server"
 import { VoiceProvider } from "@humeai/voice-react"
+import { Box, Spinner, VStack, Text } from "@chakra-ui/react"
 import { StartCall } from "./_StartCall"
 import { canCreateInterview } from "@/features/interviews/permissions"
 
@@ -22,9 +22,12 @@ export default async function NewInterviewPage({
   return (
     <Suspense
       fallback={
-        <div className="h-screen-header flex items-center justify-center">
-          <Loader2Icon className="animate-spin size-24" />
-        </div>
+        <Box height="calc(100vh - 4rem)" display="flex" alignItems="center" justifyContent="center">
+          <VStack spacing={4}>
+            <Spinner size="xl" thickness="4px" speed="0.65s" color="brand.500" />
+            <Text color="gray.500" fontSize="sm">Preparing interview...</Text>
+          </VStack>
+        </Box>
       }
     >
       <SuspendedComponent jobInfoId={jobInfoId} />

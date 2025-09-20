@@ -1,79 +1,48 @@
-"use client"
+'use client'
 
-import { type ComponentProps, type ReactNode, useTransition } from "react"
-import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
-import { LoadingSwap } from "@/components/ui/loading-swap"
-import {
-  AlertDialog,
-  AlertDialogDescription,
-  AlertDialogTitle,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+import { Button } from '@/components/ui/button'
+import { useState } from 'react'
+import { ReactNode } from 'react'
 
-export function ActionButton({
-  action,
-  requireAreYouSure = false,
-  areYouSureDescription = "This action cannot be undone.",
-  ...props
-}: ComponentProps<typeof Button> & {
+interface ActionButtonProps {
+  children: ReactNode
   action: () => Promise<{ error: boolean; message?: string }>
-  requireAreYouSure?: boolean
-  areYouSureDescription?: ReactNode
-}) {
-  const [isLoading, startTransition] = useTransition()
+  variant?: 'solid' | 'outline' | 'ghost' | 'link' | 'gradient' | 'secondary'
+  size?: 'sm' | 'md' | 'lg' | 'xl'
+  disabled?: boolean
+}
 
-  function performAction() {
-    startTransition(async () => {
-      const data = await action()
-      if (data.error) toast.error(data.message ?? "Error")
-    })
+export function ActionButton({ 
+  children, 
+  action, 
+  variant = 'solid',
+  size = 'md',
+  disabled = false 
+}: ActionButtonProps) {
+  const [isLoading, setIsLoading] = useState(false)
+  
+  const handleClick = async () => {
+    if (isLoading || disabled) return
+    
+    setIsLoading(true)
+    try {
+      await action()
+    } catch (error) {
+      console.error('Action failed:', error)
+    } finally {
+      setIsLoading(false)
+    }
   }
-
-  if (requireAreYouSure) {
-    return (
-      <AlertDialog open={isLoading ? true : undefined}>
-        <AlertDialogTrigger asChild>
-          <Button {...props} />
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              {areYouSureDescription}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction disabled={isLoading} onClick={performAction}>
-              <LoadingSwap isLoading={isLoading}>Yes</LoadingSwap>
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    )
-  }
-
+  
   return (
-    <Button
-      {...props}
-      disabled={props.disabled ?? isLoading}
-      onClick={e => {
-        performAction()
-        props.onClick?.(e)
-      }}
+    <Button 
+      variant={variant}
+      size={size}
+      onClick={handleClick}
+      isLoading={isLoading}
+      disabled={disabled || isLoading}
     >
-      <LoadingSwap
-        isLoading={isLoading}
-        className="inline-flex items-center gap-2"
-      >
-        {props.children}
-      </LoadingSwap>
+      {children}
     </Button>
   )
 }

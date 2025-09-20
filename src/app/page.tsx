@@ -1,3 +1,18 @@
+import {
+  Box,
+  Container,
+  Flex,
+  Heading,
+  Text,
+  VStack,
+  HStack,
+  SimpleGrid,
+  Icon,
+  Badge,
+  Avatar,
+  Divider,
+  Stack,
+} from '@chakra-ui/react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getCurrentUser } from "@/services/clerk/lib/getCurrentUser"
@@ -10,19 +25,33 @@ import {
   FileText,
   Search,
   SpeechIcon,
+  ArrowRight,
+  Play,
 } from "lucide-react"
-import Image from "next/image"
 import Link from "next/link"
 import { Suspense } from "react"
 import { UserAvatar } from "@/features/users/components/UserAvatar"
 import { PricingTable } from "@/services/clerk/components/PricingTable"
+import { LandingNavbar } from "./_components/LandingNavbar"
 
 export default async function LandingPage() {
   const { userId } = await getCurrentUser();
 
   return (
-    <div className="bg-gradient-to-b from-background to-muted/20">
-      <Navbar />
+    <Box minH="100vh" position="relative" overflow="hidden">
+      {/* Background Elements */}
+      <Box
+        position="absolute"
+        inset={0}
+        bgGradient="radial(ellipse 80% 80% at 50% -20%, purple.200, transparent)"
+        opacity={0.3}
+        _dark={{
+          bgGradient: 'radial(ellipse 80% 80% at 50% -20%, purple.800, transparent)',
+          opacity: 0.2
+        }}
+      />
+      
+      <LandingNavbar />
       <Hero />
       <Features />
       <DetailedFeatures />
@@ -30,55 +59,42 @@ export default async function LandingPage() {
       <Testimonials />
       <Pricing />
       <Footer />
-    </div>
+    </Box>
   )
 }
 
-function Navbar() {
-  return (
-    <nav className="border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-50">
-      <div className="container">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center gap-2">
-            <BrainCircuitIcon className="size-8 text-primary" />
-            <h1 className="text-2xl font-bold text-foreground">EvoInterview</h1>
-          </div>
-          <Suspense
-            fallback={
-              <SignInButton forceRedirectUrl="/app">
-                <Button variant="outline">Sign In</Button>
-              </SignInButton>
-            }
-          >
-            <NavButton />
-          </Suspense>
-        </div>
-      </div>
-    </nav>
-  )
-}
-
-async function NavButton() {
-  const { userId } = await getCurrentUser()
-
-  if (userId == null) {
-    return (
-      <SignInButton forceRedirectUrl="/app">
-        <Button variant="outline">Sign In</Button>
-      </SignInButton>
-    )
-  }
-
-  return (
-    <Button asChild>
-      <Link href="/app">Dashboard</Link>
-    </Button>
-  )
-}
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden py-20 sm:py-32">
+    <Box as="section" position="relative" overflow="hidden" py={20}>
+      {/* Animated Background Elements */}
+      <Box position="absolute" inset={0} pointerEvents="none">
+        <Box 
+          position="absolute" 
+          top="25%" 
+          left="25%" 
+          w="72" 
+          h="72" 
+          bg="purple.500" 
+          opacity={0.1} 
+          borderRadius="full" 
+          filter="blur(12px)" 
+          className="animate-pulse" 
+        />
+        <Box 
+          position="absolute" 
+          bottom="25%" 
+          right="25%" 
+          w="96" 
+          h="96" 
+          bg="blue.500" 
+          opacity={0.1} 
+          borderRadius="full" 
+          filter="blur(12px)" 
+          className="animate-float" 
+        />
+      </Box>
+      
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -87,34 +103,127 @@ function Hero() {
             "@type": "Organization",
             name: "EvoInterview",
             url: "https://evointerview.com",
-            logo: "https://evointerview.com/brain-circuit.svg", // Represents the BrainCircuitIcon used in the header
+            logo: "https://evointerview.com/brain-circuit.svg",
             sameAs: [
-              "https://twitter.com/evointerview", // Replace with actual Twitter handle
-              "https://linkedin.com/company/evointerview", // Replace with actual LinkedIn page
+              "https://twitter.com/evointerview",
+              "https://linkedin.com/company/evointerview",
             ],
           }),
         }}
       />
-      <div className="container">
-        <div className="text-center">
-          <h2 className="text-4xl sm:text-6xl font-bold text-foreground mb-6 leading-tight">
-            Land your dream job with{" "}
-            <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent text-nowrap">
-              AI-powered
-            </span>{" "}
-            job preparation
-          </h2>
-          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-            Skip the guesswork and accelerate your job search. Our AI platform
-            eliminates interview anxiety, optimizes your resume, and gives you
-            the technical edge to land offers faster.
-          </p>
-          <Button size="lg" className="h-12 px-6 text-base" asChild>
-            <Link href="/app">Get Started for Free</Link>
-          </Button>
-        </div>
-      </div>
-    </section>
+      
+      <Container maxW="6xl" position="relative">
+        <VStack spacing={8} textAlign="center" maxW="5xl" mx="auto">
+          <Box className="animate-slide-up">
+            <Heading 
+              as="h2" 
+              fontSize={{ base: '5xl', md: '7xl', lg: '8xl' }} 
+              fontWeight="bold" 
+              mb={8} 
+              lineHeight={0.9} 
+              letterSpacing="tighter"
+            >
+              Land your dream job with{" "}
+              <Text 
+                as="span" 
+                className="text-gradient" 
+                position="relative" 
+                display="inline-block"
+              >
+                <Text
+                  as="span"
+                  position="absolute"
+                  inset={0}
+                  filter="blur(8px)"
+                  opacity={0.3}
+                  className="text-gradient animate-glow"
+                >
+                  AI-powered
+                </Text>
+                <Text as="span" position="relative">
+                  AI-powered
+                </Text>
+              </Text>{" "}
+              job preparation
+            </Heading>
+          </Box>
+          
+          <Box className="animate-slide-up" style={{animationDelay: '200ms', opacity: 0, animationFillMode: 'forwards'}}>
+            <Text 
+              fontSize={{ base: 'xl', md: '2xl' }} 
+              color="gray.600" 
+              maxW="4xl" 
+              mx="auto" 
+              lineHeight="relaxed" 
+              fontWeight="light"
+              _dark={{ color: 'gray.300' }}
+            >
+              Skip the guesswork and accelerate your job search. Our AI platform
+              eliminates interview anxiety, optimizes your resume, and gives you
+              the technical edge to land offers{" "}
+              <Text as="span" color="purple.500" fontWeight="semibold">
+                2.3x faster
+              </Text>.
+            </Text>
+          </Box>
+          
+          <Stack 
+            direction={{ base: 'column', sm: 'row' }} 
+            spacing={4} 
+            justify="center" 
+            align="center"
+            className="animate-slide-up" 
+            style={{animationDelay: '400ms', opacity: 0, animationFillMode: 'forwards'}}
+          >
+            <Link href="/app">
+              <Button 
+                size="xl" 
+                variant="gradient"
+                className="hover-lift shadow-glow animate-glow"
+                rightIcon={
+                  <Icon viewBox="0 0 24 24" boxSize={5}>
+                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" fill="none" />
+                  </Icon>
+                }
+              >
+                Get Started for Free
+              </Button>
+            </Link>
+            <Button 
+              variant="glass" 
+              size="xl" 
+              className="hover-lift"
+              leftIcon={
+                <Icon viewBox="0 0 24 24" boxSize={5}>
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1m-6-8h8a2 2 0 012 2v8a2 2 0 01-2 2H8a2 2 0 01-2-2v-8a2 2 0 012-2z" fill="none" />
+                </Icon>
+              }
+            >
+              Watch Demo
+            </Button>
+          </Stack>
+          
+          <VStack 
+            spacing={4} 
+            mt={16} 
+            textAlign="center" 
+            className="animate-fade-in" 
+            style={{animationDelay: '600ms', opacity: 0, animationFillMode: 'forwards'}}
+          >
+            <Text fontSize="sm" color="gray.500" _dark={{ color: 'gray.400' }}>
+              Trusted by job seekers at
+            </Text>
+            <HStack spacing={8} justify="center" opacity={0.6}>
+              <Text fontSize="2xl" fontWeight="bold" letterSpacing="wider">Google</Text>
+              <Text fontSize="2xl" fontWeight="bold" letterSpacing="wider">Meta</Text>
+              <Text fontSize="2xl" fontWeight="bold" letterSpacing="wider">Apple</Text>
+              <Text fontSize="2xl" fontWeight="bold" letterSpacing="wider">Netflix</Text>
+              <Text fontSize="2xl" fontWeight="bold" letterSpacing="wider">Amazon</Text>
+            </HStack>
+          </VStack>
+        </VStack>
+      </Container>
+    </Box>
   )
 }
 
@@ -122,56 +231,218 @@ function Features() {
   const features = [
     {
       title: "AI Interview Practice",
-      Icon: SpeechIcon,
+      icon: (
+        <Icon viewBox="0 0 24 24" boxSize={10} color="white">
+          <path stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M8.8 20v-4.1l1.9.2a2.3 2.3 0 0 0 2.164-2.1V8.3A5.37 5.37 0 0 0 2 8.25c0 2.8.656 3.054 1 4.55a5.77 5.77 0 0 1 .029 2.758L2 20" fill="none" />
+          <path stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M19.8 17.8a7.5 7.5 0 0 0 .003-10.603" fill="none" />
+          <path stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M17 15a3.5 3.5 0 0 0-.025-4.975" fill="none" />
+        </Icon>
+      ),
       description:
         "Simulate real interviews with AI that adapts to your responses. Build confidence and eliminate nervousness before the big day.",
+      gradientFrom: "blue.500",
+      gradientTo: "purple.500"
     },
     {
       title: "Tailored Resume Suggestions",
-      Icon: FileSlidersIcon,
+      icon: (
+        <Icon viewBox="0 0 24 24" boxSize={10} color="white">
+          <path stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" fill="none" />
+          <path stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M14 2v4a2 2 0 0 0 2 2h4" fill="none" />
+          <path stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M8 12h8" fill="none" />
+          <path stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M10 11v2" fill="none" />
+          <path stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M8 17h8" fill="none" />
+          <path stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M14 16v2" fill="none" />
+        </Icon>
+      ),
       description:
         "Transform your resume into an ATS-friendly, recruiter-approved document that gets you more callbacks.",
+      gradientFrom: "emerald.500",
+      gradientTo: "teal.500"
     },
     {
       title: "Technical Question Practice",
-      Icon: BookOpenCheckIcon,
+      icon: (
+        <Icon viewBox="0 0 24 24" boxSize={10} color="white">
+          <path stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M12 21V7" fill="none" />
+          <path stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="m16 12 2 2 4-4" fill="none" />
+          <path stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M22 6V4a1 1 0 0 0-1-1h-5a4 4 0 0 0-4 4 4 4 0 0 0-4-4H3a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h6a3 3 0 0 1 3 3 3 3 0 0 1 3-3h6a1 1 0 0 0 1-1v-1.3" fill="none" />
+        </Icon>
+      ),
       description:
         "Solve coding problems with guided hints and explanations. Perfect your approach to technical interviews.",
+      gradientFrom: "orange.500",
+      gradientTo: "red.500"
     },
   ]
+  
   return (
-    <section className="py-20">
-      <div className="container">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {features.map(feature => (
-            <Card
-              key={feature.title}
-              className="transition-all duration-300 transform hover:-translate-y-1"
+    <Box as="section" py={20} position="relative">
+      <Container maxW="7xl">
+        <VStack spacing={20} textAlign="center" className="animate-slide-up">
+          <VStack spacing={6} maxW="4xl" mx="auto">
+            <Heading 
+              as="h3" 
+              fontSize={{ base: '4xl', sm: '5xl' }} 
+              fontWeight="bold" 
+              letterSpacing="tight"
             >
-              <CardHeader className="pb-4">
-                <div className="w-16 h-16 mb-4 bg-primary/10 flex items-center justify-center rounded-lg">
-                  <feature.Icon className="w-8 h-8 text-primary" />
-                </div>
-                <CardTitle className="text-2xl font-bold text-card-foreground">
-                  {feature.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground text-lg leading-relaxed">
-                  {feature.description}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-    </section>
+              Everything you need to{" "}
+              <Text as="span" className="text-gradient">succeed</Text>
+            </Heading>
+            <Text 
+              fontSize="xl" 
+              color="gray.600" 
+              maxW="3xl" 
+              mx="auto" 
+              lineHeight="relaxed"
+              _dark={{ color: "gray.300" }}
+            >
+              Comprehensive AI-powered tools designed to accelerate your job search
+              and land your dream position faster than ever.
+            </Text>
+          </VStack>
+          
+          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8} w="full">
+            {features.map((feature, index) => (
+              <Box
+                key={feature.title}
+                bg="whiteAlpha.900"
+                backdropFilter="blur(20px)"
+                borderWidth="1px"
+                borderColor="whiteAlpha.300"
+                borderRadius="2xl"
+                p={8}
+                boxShadow="xl"
+                transition="all 0.3s ease"
+                _hover={{
+                  transform: "translateY(-4px)",
+                  boxShadow: "3xl"
+                }}
+                _dark={{
+                  bg: "blackAlpha.300",
+                  borderColor: "whiteAlpha.100"
+                }}
+                className="animate-slide-up"
+                style={{
+                  animationDelay: `${index * 200}ms`,
+                  opacity: 0,
+                  animationFillMode: "forwards"
+                }}
+              >
+                <VStack spacing={6} textAlign="center">
+                  <Box
+                    w={20}
+                    h={20}
+                    mx="auto"
+                    bgGradient={`linear(to-br, ${feature.gradientFrom}, ${feature.gradientTo})`}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    borderRadius="2xl"
+                    boxShadow="lg"
+                    opacity={0.2}
+                    transition="all 0.3s"
+                    _hover={{
+                      opacity: 0.3,
+                      transform: "scale(1.1)",
+                      boxShadow: "xl"
+                    }}
+                  >
+                    {feature.icon}
+                  </Box>
+                  <Heading 
+                    as="h4" 
+                    fontSize="2xl" 
+                    fontWeight="bold"
+                    _dark={{ color: "white" }}
+                  >
+                    {feature.title}
+                  </Heading>
+                  <Text 
+                    color="gray.600" 
+                    fontSize="lg" 
+                    lineHeight="relaxed"
+                    _dark={{ color: "gray.300" }}
+                  >
+                    {feature.description}
+                  </Text>
+                </VStack>
+              </Box>
+            ))}
+          </SimpleGrid>
+        </VStack>
+      </Container>
+    </Box>
   )
 }
 
 function DetailedFeatures() {
+  // Create inline SVG icons to avoid serialization issues
+  const SpeechIcon = () => (
+    <Icon viewBox="0 0 24 24" boxSize={6}>
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M8.8 20v-4.1l1.9.2a2.3 2.3 0 0 0 2.164-2.1V8.3A5.37 5.37 0 0 0 2 8.25c0 2.8.656 3.054 1 4.55a5.77 5.77 0 0 1 .029 2.758L2 20" 
+        fill="none" />
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M19.8 17.8a7.5 7.5 0 0 0 .003-10.603" fill="none" />
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M17 15a3.5 3.5 0 0 0-.025-4.975" fill="none" />
+    </Icon>
+  )
+  
+  const FileSlidersIcon = () => (
+    <Icon viewBox="0 0 24 24" boxSize={6}>
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" fill="none" />
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M14 2v4a2 2 0 0 0 2 2h4" fill="none" />
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M8 12h8" fill="none" />
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M10 11v2" fill="none" />
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M8 17h8" fill="none" />
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M14 16v2" fill="none" />
+    </Icon>
+  )
+  
+  const BookOpenCheckIcon = () => (
+    <Icon viewBox="0 0 24 24" boxSize={6}>
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M12 21V7" fill="none" />
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="m16 12 2 2 4-4" fill="none" />
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M22 6V4a1 1 0 0 0-1-1h-5a4 4 0 0 0-4 4 4 4 0 0 0-4-4H3a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h6a3 3 0 0 1 3 3 3 3 0 0 1 3-3h6a1 1 0 0 0 1-1v-1.3" 
+        fill="none" />
+    </Icon>
+  )
+  
+  const BrainIcon = () => (
+    <Icon viewBox="0 0 24 24" boxSize={4}>
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M12 18V5" fill="none" />
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" fill="none" />
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" fill="none" />
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M17.997 5.125a4 4 0 0 1 2.526 5.77" fill="none" />
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M18 18a4 4 0 0 0 2-7.464" fill="none" />
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" fill="none" />
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M6 18a4 4 0 0 1-2-7.464" fill="none" />
+      <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+        d="M6.003 5.125a4 4 0 0 0-2.526 5.77" fill="none" />
+    </Icon>
+  )
+
   return (
-    <section className="py-20 bg-muted/20">
+    <Box as="section" py={20} bg="gray.50" _dark={{ bg: "gray.900" }}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -199,246 +470,336 @@ function DetailedFeatures() {
           }),
         }}
       />
-      <div className="container">
-        <div className="text-center mb-16">
-          <h3 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-            Everything you need to{" "}
-            <span className="text-primary">ace your interviews</span>
-          </h3>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Get hands-on experience with real interview scenarios, personalized
-            feedback, and industry-proven strategies
-          </p>
-        </div>
+      <Container maxW="7xl">
+        <VStack spacing={16} textAlign="center">
+          <VStack spacing={6} maxW="4xl" mx="auto">
+            <Heading 
+              as="h3" 
+              fontSize={{ base: '3xl', sm: '4xl' }} 
+              fontWeight="bold" 
+              mb={4}
+            >
+              Everything you need to{" "}
+              <Text as="span" bgGradient="linear(to-r, purple.500, blue.500)" bgClip="text">
+                ace your interviews
+              </Text>
+            </Heading>
+            <Text 
+              fontSize="xl" 
+              color="gray.600" 
+              maxW="2xl" 
+              mx="auto"
+              _dark={{ color: "gray.300" }}
+            >
+              Get hands-on experience with real interview scenarios, personalized
+              feedback, and industry-proven strategies
+            </Text>
+          </VStack>
 
-        <div className="space-y-20">
-          {/* AI Interview Practice */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <SpeechIcon className="w-6 h-6 text-primary" />
-                </div>
-                <h4 className="text-2xl font-bold text-foreground">
-                  AI Interview Practice
-                </h4>
-              </div>
-              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                Practice with our advanced AI interviewer that adapts to your
-                responses and provides real-time feedback. Experience realistic
-                interview scenarios for behavioral, technical, and case study
-                questions.
-              </p>
-              <ul className="space-y-3 text-muted-foreground">
-                <li className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  Real-time voice interaction with AI interviewer
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  Personalized feedback on communication style
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  Industry-specific question banks
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  Progress tracking and improvement metrics
-                </li>
-              </ul>
-            </div>
-            <div className="bg-card rounded-2xl p-6 border border-border shadow-lg">
-              <div className="bg-muted/50 rounded-lg p-4 mb-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-                    <Brain className="w-4 h-4 text-primary" />
-                  </div>
-                  <span className="text-sm font-medium text-foreground">
-                    AI Interviewer
-                  </span>
-                </div>
-                <p className="text-sm text-muted-foreground italic">
-                  &quot;Tell me about a time when you had to work with a
-                  difficult team member...&quot;
-                </p>
-              </div>
-              <div className="bg-primary/5 rounded-lg p-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-                    <span className="text-xs font-bold text-primary">You</span>
-                  </div>
-                  <span className="text-sm font-medium text-foreground">
-                    Your Response
-                  </span>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  &quot;In my previous role, I worked with a colleague who
-                  consistently missed deadlines...&quot;
-                </p>
-                <div className="mt-3 flex items-center gap-2">
-                  <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
-                    Strong storytelling
-                  </span>
-                  <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
-                    Good structure
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <VStack spacing={20} w="full">
+            {/* AI Interview Practice */}
+            <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={12} alignItems="center" w="full">
+              <VStack spacing={6} align="flex-start">
+                <Flex align="center" gap={3}>
+                  <Box 
+                    w={12} 
+                    h={12} 
+                    bg="purple.50" 
+                    borderRadius="lg" 
+                    display="flex" 
+                    alignItems="center" 
+                    justifyContent="center"
+                    _dark={{ bg: "purple.900" }}
+                  >
+                    <Box color="purple.500">
+                      <SpeechIcon />
+                    </Box>
+                  </Box>
+                  <Heading as="h4" fontSize="2xl" fontWeight="bold">
+                    AI Interview Practice
+                  </Heading>
+                </Flex>
+                <Text 
+                  fontSize="lg" 
+                  color="gray.600" 
+                  lineHeight="relaxed"
+                  _dark={{ color: "gray.300" }}
+                >
+                  Practice with our advanced AI interviewer that adapts to your
+                  responses and provides real-time feedback. Experience realistic
+                  interview scenarios for behavioral, technical, and case study
+                  questions.
+                </Text>
+                <VStack spacing={3} align="flex-start" color="gray.600" _dark={{ color: "gray.300" }}>
+                  <Flex align="center" gap={3}>
+                    <Box w={2} h={2} bg="purple.500" borderRadius="full" />
+                    <Text>Real-time voice interaction with AI interviewer</Text>
+                  </Flex>
+                  <Flex align="center" gap={3}>
+                    <Box w={2} h={2} bg="purple.500" borderRadius="full" />
+                    <Text>Personalized feedback on communication style</Text>
+                  </Flex>
+                  <Flex align="center" gap={3}>
+                    <Box w={2} h={2} bg="purple.500" borderRadius="full" />
+                    <Text>Industry-specific question banks</Text>
+                  </Flex>
+                  <Flex align="center" gap={3}>
+                    <Box w={2} h={2} bg="purple.500" borderRadius="full" />
+                    <Text>Progress tracking and improvement metrics</Text>
+                  </Flex>
+                </VStack>
+              </VStack>
+              <Box bg="white" borderRadius="2xl" p={6} borderWidth={1} borderColor="gray.200" shadow="lg" _dark={{ bg: "gray.800", borderColor: "gray.600" }}>
+                <Box bg="gray.50" borderRadius="lg" p={4} mb={4} _dark={{ bg: "gray.700" }}>
+                  <Flex align="center" gap={3} mb={3}>
+                    <Box 
+                      w={8} 
+                      h={8} 
+                      bg="purple.100" 
+                      borderRadius="full" 
+                      display="flex" 
+                      alignItems="center" 
+                      justifyContent="center"
+                      _dark={{ bg: "purple.800" }}
+                    >
+                      <Box color="purple.500">
+                        <BrainIcon />
+                      </Box>
+                    </Box>
+                    <Text fontSize="sm" fontWeight="medium">
+                      AI Interviewer
+                    </Text>
+                  </Flex>
+                  <Text fontSize="sm" color="gray.600" fontStyle="italic" _dark={{ color: "gray.300" }}>
+                    &quot;Tell me about a time when you had to work with a
+                    difficult team member...&quot;
+                  </Text>
+                </Box>
+                <Box bg="purple.50" borderRadius="lg" p={4} _dark={{ bg: "purple.900" }}>
+                  <Flex align="center" gap={3} mb={3}>
+                    <Box 
+                      w={8} 
+                      h={8} 
+                      bg="purple.100" 
+                      borderRadius="full" 
+                      display="flex" 
+                      alignItems="center" 
+                      justifyContent="center"
+                      _dark={{ bg: "purple.800" }}
+                    >
+                      <Text fontSize="xs" fontWeight="bold" color="purple.500">
+                        You
+                      </Text>
+                    </Box>
+                    <Text fontSize="sm" fontWeight="medium">
+                      Your Response
+                    </Text>
+                  </Flex>
+                  <Text fontSize="sm" color="gray.600" _dark={{ color: "gray.300" }}>
+                    &quot;In my previous role, I worked with a colleague who
+                    consistently missed deadlines...&quot;
+                  </Text>
+                  <Flex gap={2} mt={3}>
+                    <Badge colorScheme="purple" fontSize="xs" px={2} py={1}>
+                      Strong storytelling
+                    </Badge>
+                    <Badge colorScheme="purple" fontSize="xs" px={2} py={1}>
+                      Good structure
+                    </Badge>
+                  </Flex>
+                </Box>
+              </Box>
+            </SimpleGrid>
 
-          {/* Resume Optimization */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="lg:order-2">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <FileSlidersIcon className="w-6 h-6 text-primary" />
-                </div>
-                <h4 className="text-2xl font-bold text-foreground">
-                  Smart Resume Analysis
-                </h4>
-              </div>
-              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                Transform your resume with AI-powered suggestions that optimize
-                for ATS systems and recruiter preferences. Get specific,
-                actionable feedback tailored to your target role and industry.
-              </p>
-              <ul className="space-y-3 text-muted-foreground">
-                <li className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  ATS compatibility scoring and optimization
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  Job description matching analysis
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  Industry-specific keyword suggestions
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  Before/after impact measurement
-                </li>
-              </ul>
-            </div>
-            <div className="lg:order-1 bg-card rounded-2xl p-6 border border-border shadow-lg">
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-foreground">
-                    Resume Score
-                  </span>
-                  <span className="text-2xl font-bold text-primary">87%</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div
-                    className="bg-primary h-2 rounded-full"
-                    style={{ width: "87%" }}
-                  ></div>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                  <span className="text-sm text-foreground">
-                    ATS Compatibility
-                  </span>
-                  <span className="text-sm font-medium text-primary">
-                    Excellent
-                  </span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                  <span className="text-sm text-foreground">Keyword Match</span>
-                  <span className="text-sm font-medium text-primary">92%</span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                  <span className="text-sm text-foreground">
-                    Impact Statements
-                  </span>
-                  <span className="text-sm font-medium text-primary">Good</span>
-                </div>
-              </div>
-              <div className="mt-4 p-3 bg-primary/10 rounded-lg">
-                <p className="text-xs text-primary font-medium mb-1">
-                  💡 Suggestion
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Add 2 more quantified achievements to increase impact score
-                </p>
-              </div>
-            </div>
-          </div>
+            {/* Resume Optimization */}
+            <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={12} alignItems="center" w="full">
+              <Box order={{ lg: 2 }}>
+                <VStack spacing={6} align="flex-start">
+                  <Flex align="center" gap={3}>
+                    <Box 
+                      w={12} 
+                      h={12} 
+                      bg="purple.50" 
+                      borderRadius="lg" 
+                      display="flex" 
+                      alignItems="center" 
+                      justifyContent="center"
+                      _dark={{ bg: "purple.900" }}
+                    >
+                      <Box color="purple.500">
+                        <FileSlidersIcon />
+                      </Box>
+                    </Box>
+                    <Heading as="h4" fontSize="2xl" fontWeight="bold">
+                      Smart Resume Analysis
+                    </Heading>
+                  </Flex>
+                  <Text 
+                    fontSize="lg" 
+                    color="gray.600" 
+                    lineHeight="relaxed"
+                    _dark={{ color: "gray.300" }}
+                  >
+                    Transform your resume with AI-powered suggestions that optimize
+                    for ATS systems and recruiter preferences. Get specific,
+                    actionable feedback tailored to your target role and industry.
+                  </Text>
+                  <VStack spacing={3} align="flex-start" color="gray.600" _dark={{ color: "gray.300" }}>
+                    <Flex align="center" gap={3}>
+                      <Box w={2} h={2} bg="purple.500" borderRadius="full" />
+                      <Text>ATS compatibility scoring and optimization</Text>
+                    </Flex>
+                    <Flex align="center" gap={3}>
+                      <Box w={2} h={2} bg="purple.500" borderRadius="full" />
+                      <Text>Job description matching analysis</Text>
+                    </Flex>
+                    <Flex align="center" gap={3}>
+                      <Box w={2} h={2} bg="purple.500" borderRadius="full" />
+                      <Text>Industry-specific keyword suggestions</Text>
+                    </Flex>
+                    <Flex align="center" gap={3}>
+                      <Box w={2} h={2} bg="purple.500" borderRadius="full" />
+                      <Text>Before/after impact measurement</Text>
+                    </Flex>
+                  </VStack>
+                </VStack>
+              </Box>
+              <Box order={{ lg: 1 }} bg="white" borderRadius="2xl" p={6} borderWidth={1} borderColor="gray.200" shadow="lg" _dark={{ bg: "gray.800", borderColor: "gray.600" }}>
+                <Box mb={4}>
+                  <Flex justify="space-between" align="center" mb={3}>
+                    <Text fontSize="sm" fontWeight="medium">
+                      Resume Score
+                    </Text>
+                    <Text fontSize="2xl" fontWeight="bold" color="purple.500">
+                      87%
+                    </Text>
+                  </Flex>
+                  <Box w="full" bg="gray.200" borderRadius="full" h={2} _dark={{ bg: "gray.600" }}>
+                    <Box 
+                      bg="purple.500" 
+                      h={2} 
+                      borderRadius="full" 
+                      w="87%"
+                    />
+                  </Box>
+                </Box>
+                <VStack spacing={3}>
+                  <Flex w="full" justify="space-between" align="center" p={3} bg="gray.50" borderRadius="lg" _dark={{ bg: "gray.700" }}>
+                    <Text fontSize="sm">ATS Compatibility</Text>
+                    <Text fontSize="sm" fontWeight="medium" color="purple.500">
+                      Excellent
+                    </Text>
+                  </Flex>
+                  <Flex w="full" justify="space-between" align="center" p={3} bg="gray.50" borderRadius="lg" _dark={{ bg: "gray.700" }}>
+                    <Text fontSize="sm">Keyword Match</Text>
+                    <Text fontSize="sm" fontWeight="medium" color="purple.500">
+                      92%
+                    </Text>
+                  </Flex>
+                  <Flex w="full" justify="space-between" align="center" p={3} bg="gray.50" borderRadius="lg" _dark={{ bg: "gray.700" }}>
+                    <Text fontSize="sm">Impact Statements</Text>
+                    <Text fontSize="sm" fontWeight="medium" color="purple.500">
+                      Good
+                    </Text>
+                  </Flex>
+                </VStack>
+                <Box mt={4} p={3} bg="purple.50" borderRadius="lg" _dark={{ bg: "purple.900" }}>
+                  <Text fontSize="xs" color="purple.500" fontWeight="medium" mb={1}>
+                    💡 Suggestion
+                  </Text>
+                  <Text fontSize="xs" color="gray.600" _dark={{ color: "gray.300" }}>
+                    Add 2 more quantified achievements to increase impact score
+                  </Text>
+                </Box>
+              </Box>
+            </SimpleGrid>
 
-          {/* Technical Questions */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <BookOpenCheckIcon className="w-6 h-6 text-primary" />
-                </div>
-                <h4 className="text-2xl font-bold text-foreground">
-                  Technical Interview Prep
-                </h4>
-              </div>
-              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                Master coding interviews with our comprehensive practice
-                platform. Get step-by-step guidance, hints, and detailed
-                explanations for problems across all difficulty levels and
-                topics.
-              </p>
-              <ul className="space-y-3 text-muted-foreground">
-                <li className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  1000+ curated coding problems
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  Real-time code execution and testing
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  AI-powered hints and explanations
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  Company-specific question patterns
-                </li>
-              </ul>
-            </div>
-            <div className="bg-card rounded-2xl p-6 border border-border shadow-lg">
-              <div className="bg-muted/50 rounded-lg p-4 mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-foreground">
-                    Two Sum
-                  </span>
-                  <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
-                    Easy
-                  </span>
-                </div>
-                <p className="text-xs text-muted-foreground mb-3">
-                  Given an array of integers, return indices of two numbers that
-                  add up to target.
-                </p>
-                <div className="bg-background rounded p-2 font-mono text-xs">
-                  <span className="text-primary">def</span>{" "}
-                  <span className="text-foreground">twoSum</span>(
-                  <span className="text-primary">nums, target</span>):
-                  <br />
-                  &nbsp;&nbsp;
-                  <span className="text-muted-foreground">
-                    # Your solution here
-                  </span>
-                </div>
-              </div>
-
-              <div className="text-xs text-muted-foreground">
-                <span className="text-primary">✓</span> 3/5 test cases passed
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+            {/* Technical Questions */}
+            <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={12} alignItems="center" w="full">
+              <VStack spacing={6} align="flex-start">
+                <Flex align="center" gap={3}>
+                  <Box 
+                    w={12} 
+                    h={12} 
+                    bg="purple.50" 
+                    borderRadius="lg" 
+                    display="flex" 
+                    alignItems="center" 
+                    justifyContent="center"
+                    _dark={{ bg: "purple.900" }}
+                  >
+                    <Box color="purple.500">
+                      <BookOpenCheckIcon />
+                    </Box>
+                  </Box>
+                  <Heading as="h4" fontSize="2xl" fontWeight="bold">
+                    Technical Interview Prep
+                  </Heading>
+                </Flex>
+                <Text 
+                  fontSize="lg" 
+                  color="gray.600" 
+                  lineHeight="relaxed"
+                  _dark={{ color: "gray.300" }}
+                >
+                  Master coding interviews with our comprehensive practice
+                  platform. Get step-by-step guidance, hints, and detailed
+                  explanations for problems across all difficulty levels and
+                  topics.
+                </Text>
+                <VStack spacing={3} align="flex-start" color="gray.600" _dark={{ color: "gray.300" }}>
+                  <Flex align="center" gap={3}>
+                    <Box w={2} h={2} bg="purple.500" borderRadius="full" />
+                    <Text>1000+ curated coding problems</Text>
+                  </Flex>
+                  <Flex align="center" gap={3}>
+                    <Box w={2} h={2} bg="purple.500" borderRadius="full" />
+                    <Text>Real-time code execution and testing</Text>
+                  </Flex>
+                  <Flex align="center" gap={3}>
+                    <Box w={2} h={2} bg="purple.500" borderRadius="full" />
+                    <Text>AI-powered hints and explanations</Text>
+                  </Flex>
+                  <Flex align="center" gap={3}>
+                    <Box w={2} h={2} bg="purple.500" borderRadius="full" />
+                    <Text>Company-specific question patterns</Text>
+                  </Flex>
+                </VStack>
+              </VStack>
+              <Box bg="white" borderRadius="2xl" p={6} borderWidth={1} borderColor="gray.200" shadow="lg" _dark={{ bg: "gray.800", borderColor: "gray.600" }}>
+                <Box bg="gray.50" borderRadius="lg" p={4} mb={4} _dark={{ bg: "gray.700" }}>
+                  <Flex justify="space-between" align="center" mb={2}>
+                    <Text fontSize="sm" fontWeight="medium">
+                      Two Sum
+                    </Text>
+                    <Badge colorScheme="purple" fontSize="xs" px={2} py={1}>
+                      Easy
+                    </Badge>
+                  </Flex>
+                  <Text fontSize="xs" color="gray.600" mb={3} _dark={{ color: "gray.300" }}>
+                    Given an array of integers, return indices of two numbers that
+                    add up to target.
+                  </Text>
+                  <Box bg="gray.800" borderRadius="md" p={2} fontFamily="mono" fontSize="xs" color="gray.300" _dark={{ bg: "gray.900" }}>
+                    <Text as="span" color="purple.400">def</Text>{" "}
+                    <Text as="span" color="white">twoSum</Text>(
+                    <Text as="span" color="purple.400">nums, target</Text>):
+                    <br />
+                    &nbsp;&nbsp;
+                    <Text as="span" color="gray.500">
+                      # Your solution here
+                    </Text>
+                  </Box>
+                </Box>
+                <Text fontSize="xs" color="gray.600" _dark={{ color: "gray.300" }}>
+                  <Text as="span" color="purple.500">✓</Text> 3/5 test cases passed
+                </Text>
+              </Box>
+            </SimpleGrid>
+          </VStack>
+        </VStack>
+      </Container>
+    </Box>
   )
 }
 
@@ -471,50 +832,108 @@ function Stats() {
   ]
 
   return (
-    <section className="py-20 bg-muted/30">
-      <div className="container">
-        <div className="text-center mb-16">
-          <h3 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-            Our users land jobs{" "}
-            <span className="text-primary">faster and better</span>
-          </h3>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Don&apos;t just take our word for it. See how EvoInterview users
-            consistently outperform the competition in every metric that
-            matters.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {stats.map((stat, index) => (
-            <div
-              key={index}
-              className="text-center p-6 rounded-2xl bg-card/60 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300"
+    <Box as="section" py={20} bg="gray.100" _dark={{ bg: "gray.800" }}>
+      <Container maxW="7xl">
+        <VStack spacing={16} textAlign="center">
+          <VStack spacing={6} maxW="4xl" mx="auto">
+            <Heading 
+              as="h3" 
+              fontSize={{ base: '3xl', sm: '4xl' }} 
+              fontWeight="bold" 
+              mb={4}
             >
-              <div className="text-4xl sm:text-5xl font-bold text-primary mb-2">
-                {stat.value}
-              </div>
-              <div className="text-lg font-semibold text-foreground mb-3">
-                {stat.label}
-              </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {stat.description}
-              </p>
-            </div>
-          ))}
-        </div>
+              Our users land jobs{" "}
+              <Text as="span" bgGradient="linear(to-r, purple.500, blue.500)" bgClip="text">
+                faster and better
+              </Text>
+            </Heading>
+            <Text 
+              fontSize="xl" 
+              color="gray.600" 
+              maxW="2xl" 
+              mx="auto"
+              _dark={{ color: "gray.300" }}
+            >
+              Don&apos;t just take our word for it. See how EvoInterview users
+              consistently outperform the competition in every metric that
+              matters.
+            </Text>
+          </VStack>
 
-        <div className="text-center mt-12">
-          <p className="text-sm text-muted-foreground mb-8 text-pretty">
-            * Based on internal data from 2,500+ successful job placements in
-            2024
-          </p>
-          <Button size="lg" className="h-12 px-6" asChild>
-            <Link href="/app">Join thousands of successful job seekers</Link>
-          </Button>
-        </div>
-      </div>
-    </section>
+          <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={8} w="full">
+            {stats.map((stat, index) => (
+              <Box
+                key={index}
+                textAlign="center"
+                p={6}
+                borderRadius="2xl"
+                bg="whiteAlpha.600"
+                backdropFilter="blur(10px)"
+                borderWidth={1}
+                borderColor="whiteAlpha.500"
+                shadow="lg"
+                transition="all 0.3s"
+                _hover={{
+                  bg: "whiteAlpha.800",
+                  transform: "translateY(-2px)",
+                  shadow: "xl"
+                }}
+                _dark={{
+                  bg: "blackAlpha.600",
+                  borderColor: "whiteAlpha.200",
+                  _hover: {
+                    bg: "blackAlpha.800"
+                  }
+                }}
+              >
+                <Text 
+                  fontSize={{ base: '4xl', sm: '5xl' }} 
+                  fontWeight="bold" 
+                  color="purple.500" 
+                  mb={2}
+                >
+                  {stat.value}
+                </Text>
+                <Text fontSize="lg" fontWeight="semibold" mb={3}>
+                  {stat.label}
+                </Text>
+                <Text 
+                  fontSize="sm" 
+                  color="gray.600" 
+                  lineHeight="relaxed"
+                  _dark={{ color: "gray.300" }}
+                >
+                  {stat.description}
+                </Text>
+              </Box>
+            ))}
+          </SimpleGrid>
+
+          <VStack spacing={8} textAlign="center" mt={12}>
+            <Text 
+              fontSize="sm" 
+              color="gray.500" 
+              _dark={{ color: "gray.400" }}
+            >
+              * Based on internal data from 2,500+ successful job placements in
+              2024
+            </Text>
+            <Link href="/app">
+              <Button 
+                size="lg" 
+                bg="purple.500" 
+                color="white" 
+                px={6} 
+                py={3}
+                _hover={{ bg: "purple.600" }}
+              >
+                Join thousands of successful job seekers
+              </Button>
+            </Link>
+          </VStack>
+        </VStack>
+      </Container>
+    </Box>
   )
 }
 
@@ -583,126 +1002,213 @@ function Testimonials() {
   ]
 
   return (
-    <section className="py-20">
-      <div className="container">
-        <div className="text-center mb-16">
-          <h3 className="text-3xl sm:text-4xl font-bold text-foreground mb-4 text-balance">
-            Success stories from{" "}
-            <span className="text-primary">real users</span>
-          </h3>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto text-pretty">
-            Join thousands of professionals who&apos;ve accelerated their
-            careers with EvoInterview
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <Card
-              key={index}
-              className="relative overflow-hidden transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl h-full"
+    <Box as="section" py={20}>
+      <Container maxW="7xl">
+        <VStack spacing={16} textAlign="center">
+          <VStack spacing={6} maxW="4xl" mx="auto">
+            <Heading 
+              as="h3" 
+              fontSize={{ base: '3xl', sm: '4xl' }} 
+              fontWeight="bold" 
+              mb={4}
             >
-              <CardContent className="p-6 h-full flex flex-col">
-                <div className="flex items-center gap-3 mb-4">
-                  <UserAvatar
-                    className="size-10 flex-shrink-0"
-                    user={{
-                      imageUrl: testimonial.avatar,
-                      name: testimonial.name,
-                    }}
-                  />
-                  <div>
-                    <div className="font-semibold text-foreground">
-                      {testimonial.name}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {testimonial.role}
-                    </div>
-                  </div>
-                </div>
+              Success stories from{" "}
+              <Text as="span" bgGradient="linear(to-r, purple.500, blue.500)" bgClip="text">
+                real users
+              </Text>
+            </Heading>
+            <Text 
+              fontSize="xl" 
+              color="gray.600" 
+              maxW="2xl" 
+              mx="auto"
+              _dark={{ color: "gray.300" }}
+            >
+              Join thousands of professionals who&apos;ve accelerated their
+              careers with EvoInterview
+            </Text>
+          </VStack>
 
-                <blockquote className="text-muted-foreground leading-relaxed mb-4 italic flex-grow-1">
-                  &quot;{testimonial.content}&quot;
-                </blockquote>
+          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8} w="full">
+            {testimonials.map((testimonial, index) => (
+              <Box
+                key={index}
+                position="relative"
+                overflow="hidden"
+                transition="all 0.3s"
+                transform="auto"
+                _hover={{
+                  translateY: "-4px",
+                  shadow: "3xl"
+                }}
+                h="full"
+                bg="white"
+                borderRadius="2xl"
+                p={8}
+                borderWidth={1}
+                borderColor="whiteAlpha.300"
+                shadow="xl"
+                backdropFilter="blur(20px)"
+                _dark={{
+                  bg: "blackAlpha.300",
+                  borderColor: "whiteAlpha.100"
+                }}
+              >
+                <VStack spacing={6} h="full">
+                  <Flex align="center" gap={3} w="full" justify="flex-start">
+                    <Avatar
+                      size="md"
+                      src={testimonial.avatar}
+                      name={testimonial.name}
+                      flexShrink={0}
+                    />
+                    <VStack align="flex-start" spacing={1}>
+                      <Text fontWeight="semibold">
+                        {testimonial.name}
+                      </Text>
+                      <Text fontSize="sm" color="gray.600" _dark={{ color: "gray.400" }}>
+                        {testimonial.role}
+                      </Text>
+                    </VStack>
+                  </Flex>
 
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium text-primary">
-                    @{testimonial.company}
-                  </div>
-                  <div className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-full">
-                    Hired in {testimonial.timeToOffer}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  <Text 
+                    color="gray.600" 
+                    lineHeight="relaxed" 
+                    fontStyle="italic" 
+                    flex={1}
+                    _dark={{ color: "gray.300" }}
+                  >
+                    &quot;{testimonial.content}&quot;
+                  </Text>
 
-        <div className="text-center mt-12">
-          <p className="text-muted-foreground mb-6">
-            Ready to write your own success story?
-          </p>
-          <Button size="lg" className="h-12 px-8" asChild>
-            <Link href="/app">Start Your Journey Today</Link>
-          </Button>
-        </div>
-      </div>
-    </section>
+                  <Flex w="full" justify="space-between" align="center">
+                    <Text fontSize="sm" fontWeight="medium" color="purple.500">
+                      @{testimonial.company}
+                    </Text>
+                    <Badge 
+                      colorScheme="gray" 
+                      fontSize="xs" 
+                      px={2} 
+                      py={1} 
+                      borderRadius="full"
+                    >
+                      Hired in {testimonial.timeToOffer}
+                    </Badge>
+                  </Flex>
+                </VStack>
+              </Box>
+            ))}
+          </SimpleGrid>
+
+          <VStack spacing={6} textAlign="center" mt={12}>
+            <Text color="gray.600" _dark={{ color: "gray.400" }}>
+              Ready to write your own success story?
+            </Text>
+            <Link href="/app">
+              <Button 
+                size="lg" 
+                bg="purple.500" 
+                color="white" 
+                px={8} 
+                py={3}
+                _hover={{ bg: "purple.600" }}
+              >
+                Start Your Journey Today
+              </Button>
+            </Link>
+          </VStack>
+        </VStack>
+      </Container>
+    </Box>
   )
 }
 
 function Pricing() {
-
   return (
-    <section className="py-20 bg-muted/20">
-      <div className="container">
-        <div className="text-center mb-16">
-          <h3 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-            Choose your{" "}
-            <span className="text-primary">career acceleration</span> plan
-          </h3>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Invest in your future with flexible pricing options designed to fit
-            your career goals and budget
-          </p>
-        </div>
+    <Box as="section" py={20} bg="gray.50" _dark={{ bg: "gray.900" }}>
+      <Container maxW="7xl">
+        <VStack spacing={16} textAlign="center">
+          <VStack spacing={6} maxW="4xl" mx="auto">
+            <Heading 
+              as="h3" 
+              fontSize={{ base: '3xl', sm: '4xl' }} 
+              fontWeight="bold" 
+              mb={4}
+            >
+              Choose your{" "}
+              <Text as="span" bgGradient="linear(to-r, purple.500, blue.500)" bgClip="text">
+                career acceleration
+              </Text>{" "}
+              plan
+            </Heading>
+            <Text 
+              fontSize="xl" 
+              color="gray.600" 
+              maxW="2xl" 
+              mx="auto"
+              _dark={{ color: "gray.300" }}
+            >
+              Invest in your future with flexible pricing options designed to fit
+              your career goals and budget
+            </Text>
+          </VStack>
 
-        <div className="max-w-5xl mx-auto">
-          <PricingTable />
-        </div>
+          <Box maxW="5xl" mx="auto">
+            <PricingTable />
+          </Box>
 
-        <div className="text-center mt-12">
-          <p className="text-sm text-muted-foreground mb-4">
-            All plans include a 7-day refund period. Cancel anytime.
-          </p>
-        </div>
-      </div>
-    </section>
+          <VStack spacing={4} textAlign="center" mt={12}>
+            <Text 
+              fontSize="sm" 
+              color="gray.500" 
+              _dark={{ color: "gray.400" }}
+            >
+              All plans include a 7-day refund period. Cancel anytime.
+            </Text>
+          </VStack>
+        </VStack>
+      </Container>
+    </Box>
   )
 }
 
 function Footer() {
   return (
-    <footer className="py-6 bg-card border-t border-border">
-      <div className="container">
-        <div className="text-center">
-          <p className="text-muted-foreground">
+    <Box as="footer" py={6} bg="white" borderTopWidth={1} borderColor="gray.200" _dark={{ bg: "gray.800", borderColor: "gray.600" }}>
+      <Container maxW="7xl">
+        <VStack spacing={4} textAlign="center">
+          <Text color="gray.600" _dark={{ color: "gray.300" }}>
             Empowering your career journey with AI-powered job preparation
             tools.
-          </p>
-          <p className="text-muted-foreground mt-2">
-            <Link href="/terms-and-conditions" className="hover:underline">
-              Terms and Conditions
-            </Link> |
-            <Link href="/refund-policy" className="hover:underline">
-              Refund Policy
-            </Link> |
-            <Link href="/privacy-policy" className="hover:underline">
-              Privacy Policy
+          </Text>
+          <HStack 
+            spacing={2} 
+            color="gray.600" 
+            _dark={{ color: "gray.300" }}
+            flexWrap="wrap"
+            justify="center"
+          >
+            <Link href="/terms-and-conditions">
+              <Text _hover={{ textDecor: "underline" }} cursor="pointer">
+                Terms and Conditions
+              </Text>
             </Link>
-          </p>
-        </div>
-      </div>
-    </footer>
+            <Text>|</Text>
+            <Link href="/refund-policy">
+              <Text _hover={{ textDecor: "underline" }} cursor="pointer">
+                Refund Policy
+              </Text>
+            </Link>
+            <Text>|</Text>
+            <Link href="/privacy-policy">
+              <Text _hover={{ textDecor: "underline" }} cursor="pointer">
+                Privacy Policy
+              </Text>
+            </Link>
+          </HStack>
+        </VStack>
+      </Container>
+    </Box>
   )
 }

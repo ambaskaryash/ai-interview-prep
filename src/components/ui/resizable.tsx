@@ -1,56 +1,68 @@
-"use client"
+import { Box, Flex, FlexProps } from '@chakra-ui/react'
+import { forwardRef, ReactNode } from 'react'
 
-import * as React from "react"
-import { GripVerticalIcon } from "lucide-react"
-import * as ResizablePrimitive from "react-resizable-panels"
-
-import { cn } from "@/lib/utils"
-
-function ResizablePanelGroup({
-  className,
-  ...props
-}: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>) {
-  return (
-    <ResizablePrimitive.PanelGroup
-      data-slot="resizable-panel-group"
-      className={cn(
-        "flex h-full w-full data-[panel-group-direction=vertical]:flex-col",
-        className
-      )}
-      {...props}
-    />
-  )
+interface ResizablePanelGroupProps extends Omit<FlexProps, 'direction'> {
+  children: ReactNode
+  direction?: 'horizontal' | 'vertical'
 }
 
-function ResizablePanel({
-  ...props
-}: React.ComponentProps<typeof ResizablePrimitive.Panel>) {
-  return <ResizablePrimitive.Panel data-slot="resizable-panel" {...props} />
+export const ResizablePanelGroup = forwardRef<HTMLDivElement, ResizablePanelGroupProps>(
+  ({ children, direction = 'horizontal', ...props }, ref) => {
+    return (
+      <Flex
+        ref={ref}
+        direction={direction === 'horizontal' ? 'row' : 'column'}
+        h="100%"
+        {...props}
+      >
+        {children}
+      </Flex>
+    )
+  }
+)
+
+ResizablePanelGroup.displayName = 'ResizablePanelGroup'
+
+interface ResizablePanelProps extends FlexProps {
+  children: ReactNode
+  defaultSize?: number
+  minSize?: number
+  id?: string
 }
 
-function ResizableHandle({
-  withHandle,
-  className,
-  ...props
-}: React.ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
+export const ResizablePanel = forwardRef<HTMLDivElement, ResizablePanelProps>(
+  ({ children, defaultSize, minSize, id, ...props }, ref) => {
+    return (
+      <Box 
+        ref={ref} 
+        flex={defaultSize || 1} 
+        minW={minSize ? `${minSize}%` : undefined}
+        minH={minSize ? `${minSize}%` : undefined}
+        id={id}
+        {...props}
+      >
+        {children}
+      </Box>
+    )
+  }
+)
+
+ResizablePanel.displayName = 'ResizablePanel'
+
+interface ResizableHandleProps {
   withHandle?: boolean
-}) {
-  return (
-    <ResizablePrimitive.PanelResizeHandle
-      data-slot="resizable-handle"
-      className={cn(
-        "bg-border focus-visible:ring-ring relative flex w-px items-center justify-center after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:translate-x-0 data-[panel-group-direction=vertical]:after:-translate-y-1/2 [&[data-panel-group-direction=vertical]>div]:rotate-90",
-        className
-      )}
-      {...props}
-    >
-      {withHandle && (
-        <div className="bg-border z-10 flex h-4 w-3 items-center justify-center rounded-xs border">
-          <GripVerticalIcon className="size-2.5" />
-        </div>
-      )}
-    </ResizablePrimitive.PanelResizeHandle>
-  )
 }
 
-export { ResizablePanelGroup, ResizablePanel, ResizableHandle }
+export const ResizableHandle = ({ withHandle, ...props }: ResizableHandleProps) => (
+  <Box
+    w={withHandle ? "4px" : "1px"}
+    bg="gray.300"
+    cursor="col-resize"
+    _hover={{ bg: 'gray.400' }}
+    _dark={{
+      bg: 'gray.600',
+      _hover: { bg: 'gray.500' }
+    }}
+    {...props}
+  />
+)

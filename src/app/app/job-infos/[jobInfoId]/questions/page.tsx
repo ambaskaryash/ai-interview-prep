@@ -4,10 +4,10 @@ import { getJobInfoIdTag } from "@/features/jobInfos/dbCache"
 import { canCreateQuestion } from "@/features/questions/permissions"
 import { getCurrentUser } from "@/services/clerk/lib/getCurrentUser"
 import { and, eq } from "drizzle-orm"
-import { Loader2Icon } from "lucide-react"
 import { cacheTag } from "next/dist/server/use-cache/cache-tag"
 import { notFound, redirect } from "next/navigation"
 import { Suspense } from "react"
+import { Box, Flex, Spinner } from "@chakra-ui/react"
 import { NewQuestionClientPage } from "./_NewQuestionClientPage"
 
 export default async function QuestionsPage({
@@ -20,9 +20,9 @@ export default async function QuestionsPage({
   return (
     <Suspense
       fallback={
-        <div className="h-screen-header flex items-center justify-center">
-          <Loader2Icon className="animate-spin size-24" />
-        </div>
+        <Box height="calc(100vh - 4rem)" display="flex" alignItems="center" justifyContent="center">
+          <Spinner size="xl" thickness="4px" speed="0.65s" color="brand.500" />
+        </Box>
       }
     >
       <SuspendedComponent jobInfoId={jobInfoId} />

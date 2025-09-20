@@ -1,7 +1,18 @@
 import { BackLink } from "@/components/BackLink"
 import { Skeleton, SkeletonButton } from "@/components/Skeleton"
 import { SuspendedItem } from "@/components/SuspendedItem"
-import { Button } from "@/components/ui/button"
+import { 
+  Container,
+  VStack,
+  HStack,
+  Flex,
+  Heading,
+  Text,
+  Button,
+  Spinner,
+  Box,
+  useDisclosure
+} from "@chakra-ui/react"
 import { db } from "@/drizzle/db"
 import { InterviewTable } from "@/drizzle/schema"
 import { getInterviewIdTag } from "@/features/interviews/dbCache"
@@ -12,19 +23,22 @@ import { eq } from "drizzle-orm"
 import { cacheTag } from "next/dist/server/use-cache/cache-tag"
 import { notFound } from "next/navigation"
 import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog"
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react"
 import { MarkdownRenderer } from "@/components/MarkdownRenderer"
-import { Loader2Icon } from "lucide-react"
 import { Suspense } from "react"
 import { CondensedMessages } from "@/services/hume/components/CondensedMessages"
 import { condenseChatMessages } from "@/services/hume/lib/condenseChatMessages"
 import { fetchChatMessages } from "@/services/hume/lib/api"
 import { ActionButton } from "@/components/ui/action-button"
 import { generateInterviewFeedback } from "@/features/interviews/actions"
+import { FeedbackModal } from "./_components/FeedbackModal"
 
 export default async function InterviewPage({
   params,
@@ -44,60 +58,74 @@ export default async function InterviewPage({
   )
 
   return (
-    <div className="container my-4 space-y-4">
-      <BackLink href={`/app/job-infos/${jobInfoId}/interviews`}>
-        All Interviews
-      </BackLink>
-      <div className="space-y-6">
-        <div className="flex gap-2 justify-between">
-          <div className="space-y-2 mb-6">
-            <h1 className="text-3xl md:text-4xl">
-              Interview:{" "}
-              <SuspendedItem
-                item={interview}
-                fallback={<Skeleton className="w-48" />}
-                result={i => formatDateTime(i.createdAt)}
-              />
-            </h1>
-            <p className="text-muted-foreground">
-              <SuspendedItem
-                item={interview}
-                fallback={<Skeleton className="w-24" />}
-                result={i => i.duration}
-              />
-            </p>
-          </div>
-          <SuspendedItem
-            item={interview}
-            fallback={<SkeletonButton className="w-32" />}
-            result={i =>
-              i.feedback == null ? (
-                <ActionButton
-                  action={generateInterviewFeedback.bind(null, i.id)}
-                >
-                  Generate Feedback
-                </ActionButton>
-              ) : (
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button>View Feedback</Button>
-                  </DialogTrigger>
-                  <DialogContent className="md:max-w-3xl lg:max-w-4xl max-h-[calc(100%-2rem)] overflow-y-auto flex flex-col">
-                    <DialogTitle>Feedback</DialogTitle>
-                    <MarkdownRenderer>{i.feedback}</MarkdownRenderer>
-                  </DialogContent>
-                </Dialog>
-              )
-            }
-          />
-        </div>
-        <Suspense
-          fallback={<Loader2Icon className="animate-spin size-24 mx-auto" />}
-        >
-          <Messages interview={interview} />
-        </Suspense>
-      </div>
-    </div>
+    <Container maxW="6xl" px={{ base: 4, md: 6 }}>
+      <VStack spacing={8} align="stretch" py={4}>
+        <BackLink href={`/app/job-infos/${jobInfoId}/interviews`}>
+          All Interviews
+        </BackLink>
+        
+        <VStack spacing={6} align="stretch">
+          <Flex 
+            direction={{ base: 'column', md: 'row' }}
+            align={{ base: 'start', md: 'center' }}
+            justify="space-between"
+            gap={4}
+          >
+            <VStack align="start" spacing={2}>
+              <Heading 
+                as="h1" 
+                size={{ base: 'xl', md: '2xl' }}
+                color="gray.800"
+                _dark={{ color: 'white' }}
+              >
+                Interview: {" "}
+                <SuspendedItem
+                  item={interview}
+                  fallback={<Skeleton className="w-48" />}
+                  result={i => formatDateTime(i.createdAt)}
+                />
+              </Heading>
+              <Text 
+                color="gray.600" 
+                _dark={{ color: 'gray.300' }}
+                fontSize="lg"
+              >
+                Duration: {" "}
+                <SuspendedItem
+                  item={interview}
+                  fallback={<Skeleton className="w-24" />}
+                  result={i => i.duration || 'Not recorded'}
+                />
+              </Text>
+            </VStack>
+            
+            <SuspendedItem
+              item={interview}
+              fallback={<SkeletonButton className="w-32" />}
+              result={i => (
+                <FeedbackModal 
+                  feedback={i.feedback}
+                  interviewId={i.id}
+                  generateFeedbackAction={generateInterviewFeedback}
+                />
+              )}
+            />
+          </Flex>
+          
+          <Box>
+            <Suspense
+              fallback={
+                <Box display="flex" justifyContent="center" py={12}>
+                  <Spinner size="xl" thickness="4px" speed="0.65s" color="brand.500" />
+                </Box>
+              }
+            >
+              <Messages interview={interview} />
+            </Suspense>
+          </Box>
+        </VStack>
+      </VStack>
+    </Container>
   )
 }
 
