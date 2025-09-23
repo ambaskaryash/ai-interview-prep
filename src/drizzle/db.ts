@@ -4,11 +4,11 @@ import { Pool } from "pg"
 import * as schema from "@/drizzle/schema"
 
 // Create connection pool with SSL configuration
-// In production, SSL works normally. In development, we might need to disable SSL verification
+// Handle self-signed certificates in production (common with Supabase/managed databases)
 const pool = new Pool({
   connectionString: env.DATABASE_URL,
   ssl: process.env.NODE_ENV === "production" 
-    ? true // Use proper SSL in production
+    ? { rejectUnauthorized: false } // Accept self-signed certificates in production
     : { rejectUnauthorized: false }, // Disable SSL verification in development
 })
 
