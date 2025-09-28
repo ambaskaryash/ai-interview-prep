@@ -29,6 +29,11 @@ export function StartCall({
 }) {
   const { connect, readyState, chatMetadata, callDurationTimestamp } =
     useVoice()
+  
+  // Debug ready state changes
+  useEffect(() => {
+    console.log('🔄 Voice ready state changed:', readyState)
+  }, [readyState])
   const [interviewId, setInterviewId] = useState<string | null>(null)
   const durationRef = useRef(callDurationTimestamp)
   const router = useRouter()
@@ -73,25 +78,43 @@ export function StartCall({
         <Button
           size="lg"
           onClick={async () => {
-            const res = await createInterview({ jobInfoId: jobInfo.id })
-            if (res.error) {
-              return errorToast(res.message)
-            }
-            setInterviewId(res.id)
+            console.log('🚀 Starting interview...', { jobInfoId: jobInfo.id })
+            
+            try {
+              const res = await createInterview({ jobInfoId: jobInfo.id })
+              console.log('📝 Interview creation result:', res)
+              
+              if (res.error) {
+                console.error('❌ Interview creation failed:', res.message)
+                return errorToast(res.message)
+              }
+              
+              console.log('✅ Interview created with ID:', res.id)
+              setInterviewId(res.id)
 
-            connect({
-              auth: { type: "accessToken", value: accessToken },
-              configId: env.NEXT_PUBLIC_HUME_CONFIG_ID,
-              sessionSettings: {
-                type: "session_settings",
-                variables: {
-                  userName: user.name,
-                  title: jobInfo.title || "Not Specified",
-                  description: jobInfo.description,
-                  experienceLevel: jobInfo.experienceLevel,
+              console.log('🎤 Attempting to connect to Hume AI...')
+              console.log('Config ID:', env.NEXT_PUBLIC_HUME_CONFIG_ID)
+              console.log('Access token:', accessToken ? 'Present' : 'Missing')
+              
+              connect({
+                auth: { type: "accessToken", value: accessToken },
+                configId: env.NEXT_PUBLIC_HUME_CONFIG_ID,
+                sessionSettings: {
+                  type: "session_settings",
+                  variables: {
+                    userName: user.name,
+                    title: jobInfo.title || "Not Specified",
+                    description: jobInfo.description,
+                    experienceLevel: jobInfo.experienceLevel,
+                  },
                 },
-              },
-            })
+              })
+              
+              console.log('🔗 Connect call completed')
+            } catch (error) {
+              console.error('💥 Error during interview start:', error)
+              errorToast('Failed to start interview. Please try again.')
+            }
           }}
         >
           Start Interview
