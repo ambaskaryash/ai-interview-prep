@@ -4,16 +4,21 @@ import { getCurrentUser } from "@/services/clerk/lib/getCurrentUser"
 import { hasPermission } from "@/services/clerk/lib/hasPermission"
 import { count, eq } from "drizzle-orm"
 
+// Made free to use - unlimited questions for everyone
 export async function canCreateQuestion() {
-  return await Promise.any([
-    hasPermission("unlimited_questions").then(bool => bool || Promise.reject()),
-    Promise.all([hasPermission("5_questions"), getUserQuestionCount()]).then(
-      ([has, c]) => {
-        if (has && c < 5) return true
-        return Promise.reject()
-      }
-    ),
-  ]).catch(() => false)
+  // Always return true to allow unlimited questions
+  return true
+  
+  // Original subscription-based code (commented out):
+  // return await Promise.any([
+  //   hasPermission("unlimited_questions").then(bool => bool || Promise.reject()),
+  //   Promise.all([hasPermission("5_questions"), getUserQuestionCount()]).then(
+  //     ([has, c]) => {
+  //       if (has && c < 5) return true
+  //       return Promise.reject()
+  //     }
+  //   ),
+  // ]).catch(() => false)
 }
 
 async function getUserQuestionCount() {

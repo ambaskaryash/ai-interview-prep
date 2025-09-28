@@ -9,7 +9,7 @@ import { InterviewTable, JobInfoTable } from "@/drizzle/schema"
 import { insertInterview, updateInterview as updateInterviewDb } from "./db"
 import { getInterviewIdTag } from "./dbCache"
 import { canCreateInterview } from "./permissions"
-import { PLAN_LIMIT_MESSAGE, RATE_LIMIT_MESSAGE } from "@/lib/errorToast"
+import { RATE_LIMIT_MESSAGE } from "@/lib/errorToast"
 import { env } from "@/data/env/server"
 import arcjet, { tokenBucket, request } from "@arcjet/next"
 import { generateAiInterviewFeedback } from "@/services/ai/interviews"
@@ -40,12 +40,8 @@ export async function createInterview({
     }
   }
 
-  if (!(await canCreateInterview())) {
-    return {
-      error: true,
-      message: PLAN_LIMIT_MESSAGE,
-    }
-  }
+  // Permission check removed - app is now free to use
+  // Since canCreateInterview() now always returns true, we skip this check
 
   const decision = await aj.protect(await request(), {
     userId,

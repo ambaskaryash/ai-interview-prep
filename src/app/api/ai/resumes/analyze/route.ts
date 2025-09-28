@@ -2,7 +2,7 @@ import { db } from "@/drizzle/db"
 import { JobInfoTable } from "@/drizzle/schema"
 import { getJobInfoIdTag } from "@/features/jobInfos/dbCache"
 import { canRunResumeAnalysis } from "@/features/resumeAnalyses/permissions"
-import { PLAN_LIMIT_MESSAGE } from "@/lib/errorToast"
+// Plan limit import removed - app is now free to use
 import { analyzeResumeForJob } from "@/services/ai/resumes/ai"
 import { getCurrentUser } from "@/services/clerk/lib/getCurrentUser"
 import { and, eq } from "drizzle-orm"
@@ -47,9 +47,8 @@ export async function POST(req: Request) {
     })
   }
 
-  if (!(await canRunResumeAnalysis())) {
-    return new Response(PLAN_LIMIT_MESSAGE, { status: 403 })
-  }
+  // Permission check removed - app is now free to use
+  // Since canRunResumeAnalysis() now always returns true, we skip this check
 
   const res = await analyzeResumeForJob({
     resumeFile,

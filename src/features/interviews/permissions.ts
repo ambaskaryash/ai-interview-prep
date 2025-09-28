@@ -4,18 +4,23 @@ import { getCurrentUser } from "@/services/clerk/lib/getCurrentUser"
 import { hasPermission } from "@/services/clerk/lib/hasPermission"
 import { and, count, eq, isNotNull } from "drizzle-orm"
 
+// Made free to use - unlimited interviews for everyone
 export async function canCreateInterview() {
-  return await Promise.any([
-    hasPermission("unlimited_interviews").then(
-      bool => bool || Promise.reject()
-    ),
-    Promise.all([hasPermission("1_interview"), getUserInterviewCount()]).then(
-      ([has, c]) => {
-        if (has && c < 1) return true
-        return Promise.reject()
-      }
-    ),
-  ]).catch(() => false)
+  // Always return true to allow unlimited interviews
+  return true
+  
+  // Original subscription-based code (commented out):
+  // return await Promise.any([
+  //   hasPermission("unlimited_interviews").then(
+  //     bool => bool || Promise.reject()
+  //   ),
+  //   Promise.all([hasPermission("1_interview"), getUserInterviewCount()]).then(
+  //     ([has, c]) => {
+  //       if (has && c < 1) return true
+  //       return Promise.reject()
+  //     }
+  //   ),
+  // ]).catch(() => false)
 }
 
 async function getUserInterviewCount() {

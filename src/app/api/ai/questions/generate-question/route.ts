@@ -8,7 +8,7 @@ import { getJobInfoIdTag } from "@/features/jobInfos/dbCache"
 import { insertQuestion } from "@/features/questions/db"
 import { getQuestionJobInfoTag } from "@/features/questions/dbCache"
 import { canCreateQuestion } from "@/features/questions/permissions"
-import { PLAN_LIMIT_MESSAGE } from "@/lib/errorToast"
+// Plan limit import removed - app is now free to use
 import { generateAiQuestion } from "@/services/ai/questions"
 import { getCurrentUser } from "@/services/clerk/lib/getCurrentUser"
 import { createDataStreamResponse } from "ai"
@@ -36,9 +36,8 @@ export async function POST(req: Request) {
     return new Response("You are not logged in", { status: 401 })
   }
 
-  if (!(await canCreateQuestion())) {
-    return new Response(PLAN_LIMIT_MESSAGE, { status: 403 })
-  }
+  // Permission check removed - app is now free to use
+  // Since canCreateQuestion() now always returns true, we skip this check
 
   const jobInfo = await getJobInfo(jobInfoId, userId)
   if (jobInfo == null) {
