@@ -534,6 +534,7 @@ function Testimonials() {
       content:
         "The salary negotiation tips alone paid for the platform 10x over. I increased my offer by $25K just by following EvoInterview&apos;s guidance. Absolutely worth it!",
       timeToOffer: "4 weeks",
+       
     },
   ]
 

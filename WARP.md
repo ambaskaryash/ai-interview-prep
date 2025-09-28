@@ -11,28 +11,44 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
 - `npm run lint` - Run ESLint for code quality
 
 ### Database Commands (Drizzle ORM)
-- `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run db:push` - Push database schema changes directly to online database
+- `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run db:push` - Push database schema changes directly to online database (SSL bypass for development)
 - `npm run db:generate` - Generate migration files from schema changes
 - `npm run db:migrate` - Run pending migrations
 - `npm run db:studio` - Open Drizzle Studio for database management
 
-### Single Test/Development Workflow
-Since this project doesn't include test commands, development workflow focuses on:
-- Use `npm run dev` for hot-reload development
+### Local Development Setup
+- `docker compose up -d` - Start local PostgreSQL database with Docker
+- `node scripts/reset-database.js` - Completely reset database (drops all tables and types)
+- `node scripts/create-dev-user.js` - Create development user for testing
+- `node scripts/test-db.js` - Test database connectivity
+- `node scripts/truncate-tables.ts` - Clear all data while preserving schema
+
+### Development Workflow
+**Local Development Setup:**
+1. Copy `.env.local` with required environment variables
+2. Start local database: `docker compose up -d` (or use remote database)
+3. Push schema: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run db:push`
+4. Create dev user: `node scripts/create-dev-user.js` (if needed)
+5. Start development: `npm run dev`
+
+**Daily Development:**
+- Use `npm run dev` for hot-reload development with Turbopack
 - Use `npm run lint` to check code quality before commits
 - Use `npm run db:studio` to inspect database during development
+- Reset database when needed: `node scripts/reset-database.js`
 
 ## Architecture Overview
 
 ### Tech Stack
-- **Framework**: Next.js 15 with App Router and Turbopack
-- **Database**: PostgreSQL with Drizzle ORM
-- **Authentication**: Clerk with subscription-based permissions
-- **AI Integration**: Google Gemini (via @ai-sdk/google) for text generation
-- **Voice AI**: Hume AI for realistic interview conversations  
-- **Security**: Arcjet for rate limiting, bot detection, and request protection
-- **UI**: Tailwind CSS with Radix UI components
-- **File Handling**: Multi-format resume parsing (PDF, Word, plain text)
+- **Framework**: Next.js 15 with App Router and Turbopack (experimental useCache enabled)
+- **Database**: PostgreSQL 17.0 with Drizzle ORM and TypeScript schema validation
+- **Authentication**: Clerk with feature-based subscription permissions
+- **AI Integration**: Google Gemini (via @ai-sdk/google) with streaming response support
+- **Voice AI**: Hume AI for realistic interview conversations and feedback generation
+- **Security**: Arcjet for comprehensive protection (rate limiting, bot detection, shield mode)
+- **UI**: Tailwind CSS with Radix UI components and dark/light theme support
+- **File Handling**: Multi-format resume parsing with AI-powered analysis
+- **Development**: Docker Compose for local PostgreSQL, custom database management scripts
 
 ### Project Structure
 
@@ -56,7 +72,11 @@ Since this project doesn't include test commands, development workflow focuses o
 
 4. **App Layer** (`src/app/`)
    - Next.js App Router structure with nested layouts
-   - API routes in `api/` for AI operations and Clerk webhooks
+   - **API Routes**: Streaming AI endpoints and webhook handlers
+     - `api/ai/questions/generate-question` - Real-time question generation with streaming
+     - `api/ai/questions/generate-feedback` - AI-powered answer evaluation
+     - `api/ai/resumes/analyze` - Multi-format resume analysis with streaming
+     - `api/webhooks/clerk` - User authentication lifecycle management
    - Main application routes in `app/` subdirectory
    - Landing page with features, testimonials, and pricing
 
@@ -127,14 +147,18 @@ Features are gated by Clerk-based subscription permissions:
 ### Environment Configuration
 Environment variables are managed through `src/data/env/` with runtime validation:
 
+**Database Configuration:**
+- For **remote databases**: `POSTGRES_URL_NON_POOLING` (primary connection string)
+- For **local development**: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` (Docker Compose setup)
+- **SSL handling**: Use `NODE_TLS_REJECT_UNAUTHORIZED=0` for development databases with SSL issues
+
 **Server-side variables:**
-- Database: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` (combined into `DATABASE_URL`)
-- AI: `GEMINI_API_KEY`, `HUME_API_KEY`, `HUME_SECRET_KEY`
+- AI Services: `GEMINI_API_KEY`, `HUME_API_KEY`, `HUME_SECRET_KEY`
 - Authentication: `CLERK_SECRET_KEY`
 - Security: `ARCJET_KEY`
 
 **Client-side variables:**
-- Clerk: `NEXT_PUBLIC_CLERK_*` configuration
+- Clerk: `NEXT_PUBLIC_CLERK_*` configuration (publishable key, sign-in/up URLs)
 - Hume: `NEXT_PUBLIC_HUME_CONFIG_ID`
 
 ### Development Patterns
@@ -146,8 +170,33 @@ Environment variables are managed through `src/data/env/` with runtime validatio
 - Comprehensive error handling with user-friendly messages via Sonner toasts
 
 ### File Upload Handling
-- Secure file upload with type and size validation
-- FormData handling for multipart requests
-- Support for PDF, Word documents (.doc/.docx), and plain text
-- Client-side drag-and-drop with visual feedback
-- Server-side processing with streaming AI analysis responses
+- **Security**: 10MB file size limit, strict MIME type validation
+- **Supported formats**: PDF, Word documents (.doc/.docx), plain text
+- **FormData processing**: Multipart request handling in API routes
+- **Client-side**: Drag-and-drop interface with progress indicators
+- **Server-side**: Streaming AI analysis responses via `toTextStreamResponse()`
+
+### Development Scripts & Utilities
+**Database Management Scripts** (`scripts/` directory):
+- `create-dev-user.js` - Creates development user with hardcoded Clerk ID for testing
+- `reset-database.js` - Complete database reset (drops tables, enums, and constraints)
+- `test-db.js` - Database connectivity testing utility
+- `truncate-tables.ts` - Data cleanup while preserving schema
+
+**Docker Development Setup**:
+- `docker-compose.yml` - Local PostgreSQL 17.0 setup with environment variable configuration
+- Uses environment variables for database credentials and connection settings
+- Persistent data storage via Docker volumes (`pgdata`)
+
+### API Architecture Patterns
+**Streaming AI Endpoints**:
+- Use `createDataStreamResponse()` from AI SDK for real-time responses
+- Implement `onFinish` callbacks for database persistence after AI completion
+- Support `mergeIntoDataStream()` for combining AI streams with metadata
+- Permission checks and rate limiting applied before AI processing
+
+**Error Handling Strategy**:
+- Standardized error responses with appropriate HTTP status codes
+- Permission validation returns 403 with `PLAN_LIMIT_MESSAGE` for subscription limits
+- File validation includes size limits and MIME type checking
+- Database constraint violations handled gracefully with user-friendly messages
