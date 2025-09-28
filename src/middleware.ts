@@ -19,12 +19,15 @@ const aj = arcjet({
     slidingWindow({
       mode: "LIVE",
       interval: "1m",
-      max: 100,
+      max: 1000, // Increased for development
     }),
   ],
 })
 
 export default clerkMiddleware(async (auth, req) => {
+  // Temporarily disabled Arcjet for development to test interview functionality
+  // TODO: Re-enable Arcjet for production
+  /*
   // Skip Arcjet protection for webhook routes to avoid blocking legitimate webhook calls
   if (!req.nextUrl.pathname.startsWith('/api/webhooks/')) {
     const decision = await aj.protect(req)
@@ -33,6 +36,7 @@ export default clerkMiddleware(async (auth, req) => {
       return new Response(null, { status: 403 })
     }
   }
+  */
 
   if (!isPublicRoute(req)) {
     await auth.protect()

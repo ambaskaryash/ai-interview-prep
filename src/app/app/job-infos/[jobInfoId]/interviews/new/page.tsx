@@ -38,7 +38,8 @@ async function SuspendedComponent({ jobInfoId }: { jobInfoId: string }) {
   })
   if (userId == null || user == null) return redirectToSignIn()
 
-  if (!(await canCreateInterview())) return redirect("/app/upgrade")
+  // Permission check removed - app is now free to use
+  // Since canCreateInterview() now always returns true, we skip this check
 
   const jobInfo = await getJobInfo(jobInfoId, userId)
   if (jobInfo == null) return notFound()

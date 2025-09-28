@@ -25,7 +25,8 @@ export default async function ResumePage({
 }
 
 async function SuspendedComponent({ jobInfoId }: { jobInfoId: string }) {
-  if (!(await canRunResumeAnalysis())) return redirect("/app/upgrade")
+  // Permission check removed - app is now free to use
+  // Since canRunResumeAnalysis() now always returns true, we skip this check
 
   return <ResumePageClient jobInfoId={jobInfoId} />
 }
