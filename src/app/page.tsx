@@ -5,7 +5,6 @@ import { SignInButton } from "@clerk/nextjs"
 import {
   BookOpenCheckIcon,
   Brain,
-  BrainCircuitIcon,
   FileSlidersIcon,
   FileText,
   Search,
@@ -15,11 +14,63 @@ import Link from "next/link"
 import Image from "next/image"
 import { Suspense } from "react"
 import { UserAvatar } from "@/features/users/components/UserAvatar"
+import { Logo } from "@/components/ui/logo"
 // Pricing table import removed - app is now free to use
 
 export default function LandingPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "EvoInterview",
+    "description": "AI-powered interview preparation platform with voice practice, resume analysis, and personalized feedback. Land your dream job 2.3x faster.",
+    "url": "https://evointerview.com",
+    "applicationCategory": "EducationApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "description": "Free AI-powered interview preparation platform"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "2500",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "features": [
+      "AI Interview Practice",
+      "Resume Optimization", 
+      "Technical Question Practice",
+      "Voice Practice Sessions",
+      "Personalized Feedback"
+    ],
+    "author": {
+      "@type": "Organization",
+      "name": "EvoInterview Team",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://evointerview.com/icon",
+        "width": 32,
+        "height": 32
+      }
+    },
+    "image": {
+      "@type": "ImageObject",
+      "url": "https://evointerview.com/opengraph-image",
+      "width": 1200,
+      "height": 630,
+      "alt": "EvoInterview - AI Interview Preparation Platform"
+    }
+  }
+
   return (
     <div className="bg-gradient-to-b from-background to-muted/20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
       <Hero />
       <Features />
@@ -36,10 +87,7 @@ function Navbar() {
     <nav className="border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-50">
       <div className="container">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center gap-2">
-            <BrainCircuitIcon className="size-8 text-primary" />
-            <h1 className="text-2xl font-bold text-foreground">EvoInterview</h1>
-          </div>
+          <Logo size="md" />
           <Suspense
             fallback={
               <SignInButton forceRedirectUrl="/app">

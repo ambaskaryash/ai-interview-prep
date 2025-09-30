@@ -2,7 +2,6 @@
 
 import {
   BookOpenIcon,
-  BrainCircuitIcon,
   FileSlidersIcon,
   LogOut,
   SpeechIcon,
@@ -20,6 +19,7 @@ import Link from "next/link"
 import { UserAvatar } from "@/features/users/components/UserAvatar"
 import { useParams, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { Logo } from "@/components/ui/logo"
 
 const navLinks = [
   { name: "Interviews", href: "interviews", Icon: SpeechIcon },
@@ -36,8 +36,7 @@ export function Navbar({ user }: { user: { name: string; imageUrl: string } }) {
     <nav className="h-header border-b">
       <div className="container flex h-full items-center justify-between">
         <Link href="/app" className="flex items-center gap-2">
-          <BrainCircuitIcon className="size-8 text-primary" />
-          <span className="text-xl font-bold">EvoInterview</span>
+          <Logo size="md" />
         </Link>
 
         <div className="flex items-center gap-4">
