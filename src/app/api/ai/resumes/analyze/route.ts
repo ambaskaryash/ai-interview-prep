@@ -11,15 +11,11 @@ import { cacheTag } from "next/dist/server/use-cache/cache-tag"
 export async function POST(req: Request) {
   const { userId } = await getCurrentUser()
 
-  if (userId == null) {
-    return new Response("You are not logged in", { status: 401 })
-  }
-
   const formData = await req.formData()
   const resumeFile = formData.get("resumeFile") as File
-  const jobInfoId = formData.get("jobInfoId") as string
+  const jobInfoId = formData.get("jobInfoId") as string | null
 
-  if (!resumeFile || !jobInfoId) {
+  if (!resumeFile) {
     return new Response("Invalid request", { status: 400 })
   }
 
@@ -40,19 +36,27 @@ export async function POST(req: Request) {
     })
   }
 
-  const jobInfo = await getJobInfo(jobInfoId, userId)
-  if (jobInfo == null) {
-    return new Response("You do not have permission to do this", {
-      status: 403,
-    })
+  let jobInfo:
+    | Pick<typeof JobInfoTable.$inferSelect, "title" | "experienceLevel" | "description">
+    | null = null
+
+  if (userId != null && jobInfoId != null) {
+    jobInfo = (await getJobInfo(jobInfoId, userId)) ?? null
   }
+
+  const effectiveJobInfo =
+    jobInfo ?? {
+      title: "",
+      experienceLevel: "mid-level",
+      description: "",
+    }
 
   // Permission check removed - app is now free to use
   // Since canRunResumeAnalysis() now always returns true, we skip this check
 
   const res = await analyzeResumeForJob({
     resumeFile,
-    jobInfo,
+    jobInfo: effectiveJobInfo,
   })
 
   return res.toTextStreamResponse()
