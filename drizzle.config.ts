@@ -1,10 +1,10 @@
 import { config } from "dotenv"
-import { defineConfig } from "drizzle-kit"
+// Remove: import { defineConfig } from "drizzle-kit"
 
 // Load environment variables
-config({ path: ".env.local" })
+config({ path: ".env" })
 
-export default defineConfig({
+export default {
   out: "./src/drizzle/migrations",
   schema: "./src/drizzle/schema.ts",
   dialect: "postgresql",
@@ -14,4 +14,4 @@ export default defineConfig({
       rejectUnauthorized: false, // For Supabase SSL issues
     },
   },
-})
+}
