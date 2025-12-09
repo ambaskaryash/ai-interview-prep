@@ -1,6 +1,6 @@
 import { JobInfoTable } from "@/drizzle/schema"
+import { google } from "@ai-sdk/google"
 import { streamObject } from "ai"
-import { google } from "../models/google"
 import { aiAnalyzeSchema } from "./schemas"
 
 export async function analyzeResumeForJob({
@@ -22,9 +22,9 @@ export async function analyzeResumeForJob({
         content: [
           {
             type: "file",
-            data: await resumeFile.arrayBuffer(),
-            mimeType: resumeFile.type,
-          } as any,
+            data: new Uint8Array(await resumeFile.arrayBuffer()),
+            mediaType: resumeFile.type,
+          },
         ],
       },
     ],
