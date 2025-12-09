@@ -24,7 +24,7 @@ export async function analyzeResumeForJob({
             type: "file",
             data: await resumeFile.arrayBuffer(),
             mimeType: resumeFile.type,
-          },
+          } as any,
         ],
       },
     ],
