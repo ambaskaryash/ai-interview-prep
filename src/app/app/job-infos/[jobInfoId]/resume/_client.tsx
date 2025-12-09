@@ -30,7 +30,7 @@ import { ReactNode, useRef, useState } from "react"
 import { toast } from "sonner"
 import z from "zod"
 
-export function ResumePageClient({ jobInfoId }: { jobInfoId?: string }) {
+export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
   const [isDragOver, setIsDragOver] = useState(false)
   const fileRef = useRef<File | null>(null)
 
@@ -49,9 +49,7 @@ export function ResumePageClient({ jobInfoId }: { jobInfoId?: string }) {
       if (fileRef.current) {
         formData.append("resumeFile", fileRef.current)
       }
-      if (jobInfoId) {
-        formData.append("jobInfoId", jobInfoId)
-      }
+      formData.append("jobInfoId", jobInfoId)
 
       return fetch(url, { ...options, headers, body: formData })
     },
