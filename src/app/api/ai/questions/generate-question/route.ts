@@ -7,11 +7,9 @@ import {
 import { getJobInfoIdTag } from "@/features/jobInfos/dbCache"
 import { insertQuestion } from "@/features/questions/db"
 import { getQuestionJobInfoTag } from "@/features/questions/dbCache"
-import { canCreateQuestion } from "@/features/questions/permissions"
-// Plan limit import removed - app is now free to use
+
 import { generateAiQuestion } from "@/services/ai/questions"
 import { getCurrentUser } from "@/services/clerk/lib/getCurrentUser"
-import { createDataStreamResponse } from "ai"
 import { and, asc, eq } from "drizzle-orm"
 import { cacheTag } from "next/dist/server/use-cache/cache-tag"
 import z from "zod"
@@ -37,7 +35,6 @@ export async function POST(req: Request) {
   }
 
   // Permission check removed - app is now free to use
-  // Since canCreateQuestion() now always returns true, we skip this check
 
   const jobInfo = await getJobInfo(jobInfoId, userId)
   if (jobInfo == null) {
@@ -48,25 +45,23 @@ export async function POST(req: Request) {
 
   const previousQuestions = await getQuestions(jobInfoId)
 
-  return createDataStreamResponse({
-    execute: async dataStream => {
-      const res = generateAiQuestion({
-        previousQuestions,
-        jobInfo,
+  // Generate the AI question and save it to the database when finished
+  const res = generateAiQuestion({
+    previousQuestions,
+    jobInfo,
+    difficulty,
+    onFinish: async question => {
+      const { id } = await insertQuestion({
+        text: question,
+        jobInfoId,
         difficulty,
-        onFinish: async question => {
-          const { id } = await insertQuestion({
-            text: question,
-            jobInfoId,
-            difficulty,
-          })
-
-          dataStream.writeData({ questionId: id })
-        },
       })
-      res.mergeIntoDataStream(dataStream, { sendUsage: false })
+      // You can log or use the id here if needed
     },
   })
+
+  // Stream the AI-generated question to the client
+  return res.toTextStreamResponse()
 }
 
 async function getQuestions(jobInfoId: string) {
