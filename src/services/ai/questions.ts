@@ -4,7 +4,7 @@ import {
   QuestionTable,
 } from "@/drizzle/schema"
 import { CoreMessage, streamText } from "ai"
-import { google } from "./models/google"
+import { openai } from "./models/openai"
 
 export function generateAiQuestion({
   jobInfo,
@@ -32,7 +32,7 @@ export function generateAiQuestion({
   )
 
   return streamText({
-    model: google("gemini-2.0-flash"),
+    model: openai("gpt-4o"),
     onFinish: ({ text }) => onFinish(text),
     messages: [
       ...previousMessages,
@@ -69,7 +69,7 @@ export function generateAiQuestionFeedback({
   answer: string
 }) {
   return streamText({
-    model: google("gemini-2.0-flash"),
+    model: openai("gpt-4o"),
     prompt: answer,
     system: `You are an expert technical interviewer. Your job is to evaluate the candidate's answer to a technical interview question.
 \`\`\`
