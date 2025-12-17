@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EvoInterview Logo Concepts</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+            padding: 40px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 50px;
+            font-size: 1.1rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        .preview-area {
+            background-color: #f3f4f6;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: #2563eb; /* Primary blue color */
+        }
+        .logo-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.25rem;
+        }
+        .card p {
+            color: #6b7280;
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        /* SVG Sizing */
+        .w-24 { width: 96px; height: 96px; }
+        .w-12 { width: 48px; height: 48px; }
+        .w-8 { width: 32px; height: 32px; }
+        
+        /* Text Sizing */
+        .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+        .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+        
+        /* Utilities */
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .gap-3 { gap: 12px; }
+        .font-bold { font-weight: 700; }
+        .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+        .tracking-tight { letter-spacing: -0.025em; }
+        .tracking-wide { letter-spacing: 0.025em; }
+        .uppercase { text-transform: uppercase; }
+        .italic { font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Logo Design Concepts</h1>
+        <p class="subtitle">Review the options below for the EvoInterview brand.</p>
+        
+        <div class="grid">
+            <!-- Option 1 -->
+            <div class="card">
+                <div class="preview-area">
+                    <!-- Large Logo -->
+                    <div class="w-24" style="margin-bottom: 1rem;">
+                        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+                            <path d="M4 24C4 24 6 12 16 12C26 12 28 24 28 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                            <path d="M16 12V6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                            <circle cx="16" cy="6" r="3" fill="currentColor"/>
+                            <path d="M8 24L24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" opacity="0.3"/>
+                        </svg>
+                    </div>
+                    <!-- Smaller Variants -->
+                    <div class="logo-row">
+                        <!-- Medium -->
+                        <div class="flex items-center gap-3">
+                            <div class="w-12">
+                                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+                                    <path d="M4 24C4 24 6 12 16 12C26 12 28 24 28 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                                    <path d="M16 12V6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                                    <circle cx="16" cy="6" r="3" fill="currentColor"/>
+                                    <path d="M8 24L24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" opacity="0.3"/>
+                                </svg>
+                            </div>
+                            <span class="font-bold tracking-tight text-xl">EvoInterview</span>
+                        </div>
+                    </div>
+                </div>
+                <h3>Option 1: The 'Growth Wave'</h3>
+                <p>Combines a speech bubble with an upward trend line, symbolizing improved interview performance through practice.</p>
+            </div>
+
+            <!-- Option 2 -->
+            <div class="card">
+                <div class="preview-area">
+                    <div class="w-24" style="margin-bottom: 1rem;">
+                        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+                            <rect x="6" y="6" width="20" height="20" rx="6" stroke="currentColor" stroke-width="2.5" opacity="0.3"/>
+                            <path d="M16 10V22" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                            <path d="M10 14V18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                            <path d="M22 14V18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                            <circle cx="24" cy="8" r="3" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="logo-row">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12">
+                                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+                                    <rect x="6" y="6" width="20" height="20" rx="6" stroke="currentColor" stroke-width="2.5" opacity="0.3"/>
+                                    <path d="M16 10V22" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                                    <path d="M10 14V18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                                    <path d="M22 14V18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                                    <circle cx="24" cy="8" r="3" fill="currentColor"/>
+                                </svg>
+                            </div>
+                            <span class="font-bold font-mono tracking-tighter text-xl">EVO//INTERVIEW</span>
+                        </div>
+                    </div>
+                </div>
+                <h3>Option 2: The 'AI Nexus'</h3>
+                <p>A central node connecting to others, representing the neural network of AI and the connection between candidate and career.</p>
+            </div>
+
+            <!-- Option 3 -->
+            <div class="card">
+                <div class="preview-area">
+                    <div class="w-24" style="margin-bottom: 1rem;">
+                        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+                            <path d="M26 6H6V26H26V6Z" stroke="currentColor" stroke-width="0" fill="currentColor" fill-opacity="0.1"/>
+                            <path d="M10 10H22" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+                            <path d="M10 16H18" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+                            <path d="M10 22H22" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+                            <path d="M6 6L6 26" stroke="currentColor" stroke-width="3"/>
+                        </svg>
+                    </div>
+                    <div class="logo-row">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12">
+                                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+                                    <path d="M26 6H6V26H26V6Z" stroke="currentColor" stroke-width="0" fill="currentColor" fill-opacity="0.1"/>
+                                    <path d="M10 10H22" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+                                    <path d="M10 16H18" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+                                    <path d="M10 22H22" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+                                    <path d="M6 6L6 26" stroke="currentColor" stroke-width="3"/>
+                                </svg>
+                            </div>
+                            <span class="font-extrabold uppercase tracking-wide text-xl">EVO</span>
+                        </div>
+                    </div>
+                </div>
+                <h3>Option 3: The 'Evo Monogram'</h3>
+                <p>A strong, geometric abstract 'E' that feels architectural and foundational. Professional and corporate.</p>
+            </div>
+
+            <!-- Option 4 -->
+            <div class="card">
+                <div class="preview-area">
+                    <div class="w-24" style="margin-bottom: 1rem;">
+                        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+                            <path d="M4 16C4 16 8 22 12 22C16 22 28 8 28 8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="24" cy="24" r="2" fill="currentColor" opacity="0.5"/>
+                            <circle cx="28" cy="20" r="2" fill="currentColor" opacity="0.3"/>
+                            <circle cx="20" cy="26" r="2" fill="currentColor" opacity="0.7"/>
+                        </svg>
+                    </div>
+                    <div class="logo-row">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12">
+                                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+                                    <path d="M4 16C4 16 8 22 12 22C16 22 28 8 28 8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <circle cx="24" cy="24" r="2" fill="currentColor" opacity="0.5"/>
+                                    <circle cx="28" cy="20" r="2" fill="currentColor" opacity="0.3"/>
+                                    <circle cx="20" cy="26" r="2" fill="currentColor" opacity="0.7"/>
+                                </svg>
+                            </div>
+                            <span class="font-bold italic text-xl">EvoInterview</span>
+                        </div>
+                    </div>
+                </div>
+                <h3>Option 4: The 'Voice Pulse'</h3>
+                <p>Focuses on the voice-first nature of the app. A stylized sound wave forming a checkmark.</p>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
