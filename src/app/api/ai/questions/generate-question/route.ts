@@ -20,17 +20,21 @@ const schema = z.object({
 })
 
 export async function POST(req: Request) {
+  console.log("[ai] Received generate-question request")
   const body = await req.json()
   const result = schema.safeParse(body)
 
   if (!result.success) {
+    console.error("[ai] Schema validation failed:", result.error)
     return new Response("Error generating your question", { status: 400 })
   }
 
   const { prompt: difficulty, jobInfoId } = result.data
+  console.log(`[ai] Generating question for jobInfoId: ${jobInfoId}, difficulty: ${difficulty}`)
   const { userId } = await getCurrentUser()
 
   if (userId == null) {
+    console.error("[ai] User not logged in")
     return new Response("You are not logged in", { status: 401 })
   }
 
@@ -38,20 +42,25 @@ export async function POST(req: Request) {
 
   const jobInfo = await getJobInfo(jobInfoId, userId)
   if (jobInfo == null) {
+    console.error(`[ai] Job info not found or permission denied for user: ${userId}`)
     return new Response("You do not have permission to do this", {
       status: 403,
     })
   }
+  console.log("[ai] Job info retrieved successfully")
 
   const previousQuestions = await getQuestions(jobInfoId)
+  console.log(`[ai] Retrieved ${previousQuestions.length} previous questions`)
 
   // Generate the AI question and save it to the database when finished
   try {
+    console.log("[ai] Calling generateAiQuestion...")
     const res = generateAiQuestion({
       previousQuestions,
       jobInfo,
       difficulty,
       onFinish: async question => {
+        console.log(`[ai] Generation finished. Text length: ${question.length}`)
         try {
           const { id } = await insertQuestion({
             text: question,
@@ -65,6 +74,7 @@ export async function POST(req: Request) {
       },
     })
 
+    console.log("[ai] Stream created, returning response")
     // Stream the AI-generated question to the client
     return res.toTextStreamResponse()
   } catch (error) {
