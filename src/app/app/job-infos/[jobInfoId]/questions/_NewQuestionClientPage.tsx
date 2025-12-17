@@ -40,6 +40,12 @@ export function NewQuestionClientPage({
     data,
   } = useCompletion({
     api: "/api/ai/questions/generate-question",
+    onResponse: async res => {
+      if (!res.ok) {
+        const msg = await res.text()
+        throw new Error(msg || "Failed to generate your question")
+      }
+    },
     onFinish: () => {
       setStatus("awaiting-answer")
     },
@@ -55,6 +61,12 @@ export function NewQuestionClientPage({
     isLoading: isGeneratingFeedback,
   } = useCompletion({
     api: "/api/ai/questions/generate-feedback",
+    onResponse: async res => {
+      if (!res.ok) {
+        const msg = await res.text()
+        throw new Error(msg || "Failed to generate feedback")
+      }
+    },
     onFinish: () => {
       setStatus("awaiting-difficulty")
     },
