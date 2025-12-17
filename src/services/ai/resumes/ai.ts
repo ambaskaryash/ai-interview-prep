@@ -2,6 +2,9 @@ import { JobInfoTable } from "@/drizzle/schema"
 import { groq } from "../models/groq"
 import { streamObject } from "ai"
 import { aiAnalyzeSchema } from "./schemas"
+import * as mammoth from "mammoth"
+// @ts-ignore
+import PDFParser from "pdf2json"
 
 export async function analyzeResumeForJob({
   resumeFile,
@@ -13,24 +16,45 @@ export async function analyzeResumeForJob({
     "title" | "experienceLevel" | "description"
   >
 }) {
+  const buffer = Buffer.from(await resumeFile.arrayBuffer())
+  let resumeText = ""
+
+  if (resumeFile.type === "application/pdf") {
+    const pdfParser = new PDFParser(null, true)
+    resumeText = await new Promise<string>((resolve, reject) => {
+      pdfParser.on("pdfParser_dataError", (errData: any) =>
+        reject(errData.parserError)
+      )
+      pdfParser.on("pdfParser_dataReady", () => {
+        resolve(pdfParser.getRawTextContent())
+      })
+      pdfParser.parseBuffer(buffer)
+    })
+  } else if (
+    resumeFile.type ===
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ) {
+    const { value } = await mammoth.extractRawText({ buffer })
+    resumeText = value
+  } else if (resumeFile.type === "text/plain") {
+    resumeText = buffer.toString("utf-8")
+  } else {
+    // Fallback for unsupported types (like .doc if it got through)
+    throw new Error("Unsupported file type for analysis")
+  }
+
   return streamObject({
     model: groq("llama-3.3-70b-versatile"),
     schema: aiAnalyzeSchema,
     messages: [
       {
         role: "user",
-        content: [
-          {
-            type: "file",
-            data: new Uint8Array(await resumeFile.arrayBuffer()),
-            mediaType: resumeFile.type,
-          },
-        ],
+        content: `Here is the resume content:\n\n${resumeText}`,
       },
     ],
     system: `You are an expert resume reviewer and hiring advisor.
 
-You will receive a candidate's resume as a file in the user prompt. This resume is being used to apply for a job with the following information:
+You will receive a candidate's resume content as text in the user prompt. This resume is being used to apply for a job with the following information:
 
 Job Description:
 \`\`\`
