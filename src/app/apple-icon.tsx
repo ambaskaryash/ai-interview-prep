@@ -35,53 +35,25 @@ export default function AppleIcon() {
             </linearGradient>
           </defs>
           
-          {/* Outer tech ring */}
-          <circle
-            cx="16"
-            cy="16"
-            r="14"
+          {/* Hexagon shape */}
+          <path 
+            d="M16 4L26 9V23L16 28L6 23V9L16 4Z" 
+            stroke="url(#appleFaviconGradient)" 
+            strokeWidth="2.5" 
+            strokeLinejoin="round"
             fill="none"
-            stroke="url(#appleFaviconGradient)"
-            strokeWidth="1.5"
-            strokeDasharray="2 2"
-            opacity="0.7"
           />
           
-          {/* Inner circle */}
-          <circle
-            cx="16"
-            cy="16"
-            r="11"
-            fill="url(#appleFaviconGradient)"
-            opacity="0.1"
+          {/* Brain/Circuit nodes inside */}
+          <circle cx="16" cy="12" r="2" fill="url(#appleFaviconGradient)"/>
+          <circle cx="11" cy="20" r="2" fill="url(#appleFaviconGradient)"/>
+          <circle cx="21" cy="20" r="2" fill="url(#appleFaviconGradient)"/>
+          <path 
+            d="M16 12L11 20H21L16 12Z" 
+            stroke="url(#appleFaviconGradient)" 
+            strokeWidth="2"
+            fill="none"
           />
-          
-          {/* AI network pattern */}
-          <g stroke="url(#appleFaviconAccent)" strokeWidth="1.2" fill="none">
-            <circle cx="16" cy="16" r="2" fill="url(#appleFaviconGradient)" />
-            
-            <path d="M16 14 L20 10 M16 14 L12 10 M16 18 L20 22 M16 18 L12 22" opacity="0.8" />
-            <path d="M14 16 L10 16 M18 16 L22 16" opacity="0.8" />
-            
-            <circle cx="20" cy="10" r="1.5" fill="url(#appleFaviconGradient)" opacity="0.9" />
-            <circle cx="12" cy="10" r="1.5" fill="url(#appleFaviconGradient)" opacity="0.9" />
-            <circle cx="20" cy="22" r="1.5" fill="url(#appleFaviconGradient)" opacity="0.9" />
-            <circle cx="12" cy="22" r="1.5" fill="url(#appleFaviconGradient)" opacity="0.9" />
-            <circle cx="10" cy="16" r="1.5" fill="url(#appleFaviconGradient)" opacity="0.9" />
-            <circle cx="22" cy="16" r="1.5" fill="url(#appleFaviconGradient)" opacity="0.9" />
-          </g>
-          
-          {/* Speech indicator */}
-          <g opacity="0.9">
-            <path
-              d="M24 6 Q26 6 26 8 L26 12 Q26 14 24 14 L21 14 L19 16 L21 14 Q19 14 19 12 L19 8 Q19 6 21 6 Z"
-              fill="url(#appleFaviconGradient)"
-              opacity="0.4"
-            />
-            <circle cx="21" cy="9" r="0.5" fill="url(#appleFaviconAccent)" />
-            <circle cx="23" cy="9" r="0.5" fill="url(#appleFaviconAccent)" />
-            <circle cx="22" cy="11" r="0.5" fill="url(#appleFaviconAccent)" />
-          </g>
         </svg>
       </div>
     ),
