@@ -1,5 +1,5 @@
 import { JobInfoTable } from "@/drizzle/schema"
-import { google } from "@ai-sdk/google"
+import { google } from "../models/google"
 import { streamObject } from "ai"
 import { aiAnalyzeSchema } from "./schemas"
 
@@ -14,7 +14,7 @@ export async function analyzeResumeForJob({
   >
 }) {
   return streamObject({
-    model: google("gemini-1.5-flash"),
+    model: google("gemini-1.5-flash-001"),
     schema: aiAnalyzeSchema,
     messages: [
       {

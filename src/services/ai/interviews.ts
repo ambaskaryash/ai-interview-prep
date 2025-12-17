@@ -1,5 +1,5 @@
 import { JobInfoTable } from "@/drizzle/schema"
-import { google } from "@ai-sdk/google"
+import { google } from "./models/google"
 import { generateText } from "ai"
 import { fetchChatMessages } from "../hume/lib/api"
 
@@ -35,7 +35,7 @@ export async function generateAiInterviewFeedback({
     .filter(f => f != null)
 
   // Use a Gemini model that satisfies LanguageModelV2 requirements
-  const geminiModel = google("gemini-1.5-flash");
+  const geminiModel = google("gemini-1.5-flash-001");
 
   const { text } = await generateText({
     model: geminiModel,
