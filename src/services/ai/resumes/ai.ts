@@ -46,6 +46,8 @@ export async function analyzeResumeForJob({
   return streamObject({
     model: groq("llama-3.3-70b-versatile"),
     schema: aiAnalyzeSchema,
+    // @ts-ignore
+    mode: "json",
     messages: [
       {
         role: "user",
