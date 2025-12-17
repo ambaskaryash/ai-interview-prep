@@ -14,7 +14,7 @@ export async function analyzeResumeForJob({
   >
 }) {
   return streamObject({
-    model: google("gemini-1.5-flash-001"),
+    model: google("gemini-2.0-flash"),
     schema: aiAnalyzeSchema,
     messages: [
       {

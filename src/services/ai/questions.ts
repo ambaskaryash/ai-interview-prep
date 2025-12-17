@@ -32,7 +32,7 @@ export function generateAiQuestion({
   )
 
   return streamText({
-    model: google("gemini-1.5-flash-001"),
+    model: google("gemini-2.0-flash"),
     onFinish: ({ text }) => onFinish(text),
     messages: [
       ...previousMessages,
@@ -69,7 +69,7 @@ export function generateAiQuestionFeedback({
   answer: string
 }) {
   return streamText({
-    model: google("gemini-1.5-flash-001"),
+    model: google("gemini-2.0-flash"),
     prompt: answer,
     system: `You are an expert technical interviewer. Your job is to evaluate the candidate's answer to a technical interview question.
 \`\`\`
