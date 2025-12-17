@@ -35,7 +35,7 @@ export async function generateAiInterviewFeedback({
     .filter(f => f != null)
 
   // Use a Gemini model that satisfies LanguageModelV2 requirements
-  const geminiModel = google("gemini-2.5-flash");
+  const geminiModel = google("gemini-1.5-flash");
 
   const { text } = await generateText({
     model: geminiModel,

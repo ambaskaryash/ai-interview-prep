@@ -46,22 +46,31 @@ export async function POST(req: Request) {
   const previousQuestions = await getQuestions(jobInfoId)
 
   // Generate the AI question and save it to the database when finished
-  const res = generateAiQuestion({
-    previousQuestions,
-    jobInfo,
-    difficulty,
-    onFinish: async question => {
-      const { id } = await insertQuestion({
-        text: question,
-        jobInfoId,
-        difficulty,
-      })
-      // You can log or use the id here if needed
-    },
-  })
+  try {
+    const res = generateAiQuestion({
+      previousQuestions,
+      jobInfo,
+      difficulty,
+      onFinish: async question => {
+        try {
+          const { id } = await insertQuestion({
+            text: question,
+            jobInfoId,
+            difficulty,
+          })
+          console.log(`[ai] Question generated and saved with ID: ${id}`)
+        } catch (error) {
+          console.error("[ai] Failed to save question to DB:", error)
+        }
+      },
+    })
 
-  // Stream the AI-generated question to the client
-  return res.toTextStreamResponse()
+    // Stream the AI-generated question to the client
+    return res.toTextStreamResponse()
+  } catch (error) {
+    console.error("[ai] Error generating question stream:", error)
+    return new Response("Internal Server Error", { status: 500 })
+  }
 }
 
 async function getQuestions(jobInfoId: string) {
