@@ -48,6 +48,12 @@ export async function POST(req: Request) {
   const res = await generateCoverLetter({
     resumeFile,
     jobInfo,
+    onFinish: async (text) => {
+      await db
+        .update(JobInfoTable)
+        .set({ coverLetter: text })
+        .where(eq(JobInfoTable.id, jobInfoId))
+    },
   })
 
   return res.toTextStreamResponse()

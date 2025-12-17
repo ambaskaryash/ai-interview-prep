@@ -1,6 +1,4 @@
 import { BackLink } from "@/components/BackLink"
-import { Skeleton } from "@/components/Skeleton"
-import { SuspendedItem } from "@/components/SuspendedItem"
 import { db } from "@/drizzle/db"
 import { JobInfoTable } from "@/drizzle/schema"
 import { getJobInfoIdTag } from "@/features/jobInfos/dbCache"
@@ -18,17 +16,11 @@ export default async function PreparationPage({
   params: Promise<{ jobInfoId: string }>
 }) {
   const { jobInfoId } = await params
+  const { userId, redirectToSignIn } = await getCurrentUser()
+  if (userId == null) return redirectToSignIn()
 
-  const jobInfo = getCurrentUser().then(
-    async ({ userId, redirectToSignIn }) => {
-      if (userId == null) return redirectToSignIn()
-
-      const jobInfo = await getJobInfo(jobInfoId, userId)
-      if (jobInfo == null) return notFound()
-
-      return jobInfo
-    }
-  )
+  const jobInfo = await getJobInfo(jobInfoId, userId)
+  if (jobInfo == null) return notFound()
 
   return (
     <div className="container my-4 space-y-4">
@@ -36,11 +28,7 @@ export default async function PreparationPage({
       <div className="space-y-2">
         <h1 className="text-3xl md:text-4xl">Interview Preparation</h1>
         <p className="text-muted-foreground">
-          <SuspendedItem
-            item={jobInfo}
-            fallback={<Skeleton className="w-48" />}
-            result={(j) => `Preparation for ${j.title || "Job Application"}`}
-          />
+          Preparation for {jobInfo.title || "Job Application"}
         </p>
       </div>
 
@@ -51,7 +39,11 @@ export default async function PreparationPage({
           </div>
         }
       >
-        <PreparationPageClient jobInfoId={jobInfoId} />
+        <PreparationPageClient 
+          jobInfoId={jobInfoId} 
+          initialStudyPlan={jobInfo.studyPlan}
+          initialCheatsheet={jobInfo.cheatsheet}
+        />
       </Suspense>
     </div>
   )

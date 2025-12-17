@@ -1,8 +1,7 @@
 import { config } from "dotenv"
-// Remove: import { defineConfig } from "drizzle-kit"
 
 // Load environment variables
-config({ path: ".env" })
+config({ path: ".env.local" })
 
 export default {
   out: "./src/drizzle/migrations",

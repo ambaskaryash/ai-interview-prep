@@ -8,12 +8,14 @@ import PDFParser from "pdf2json"
 export async function generateCoverLetter({
   resumeFile,
   jobInfo,
+  onFinish,
 }: {
   resumeFile: File
   jobInfo: Pick<
     typeof JobInfoTable.$inferSelect,
     "title" | "experienceLevel" | "description"
   >
+  onFinish?: (text: string) => Promise<void>
 }) {
   console.log("Starting cover letter generation...")
   const buffer = Buffer.from(await resumeFile.arrayBuffer())
@@ -67,5 +69,8 @@ Your task is to write a highly compelling, professional cover letter for this ca
 - Keep it concise (under 400 words).
 
 Return ONLY the cover letter text in Markdown format. Do not include any "Here is your cover letter" preamble.`,
+    onFinish: async ({ text }) => {
+      if (onFinish) await onFinish(text)
+    },
   })
 }

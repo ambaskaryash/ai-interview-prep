@@ -1,9 +1,12 @@
 import { JobInfoBackLink } from "@/features/jobInfos/components/JobInfoBackLink"
-import { canRunResumeAnalysis } from "@/features/resumeAnalyses/permissions"
-import { Loader2Icon } from "lucide-react"
-import { redirect } from "next/navigation"
-import { Suspense } from "react"
 import { ResumePageClient } from "./_client"
+import { getCurrentUser } from "@/services/clerk/lib/getCurrentUser"
+import { notFound } from "next/navigation"
+import { db } from "@/drizzle/db"
+import { JobInfoTable } from "@/drizzle/schema"
+import { and, eq } from "drizzle-orm"
+import { cacheTag } from "next/dist/server/use-cache/cache-tag"
+import { getJobInfoIdTag } from "@/features/jobInfos/dbCache"
 
 export default async function ResumePage({
   params,
@@ -11,22 +14,28 @@ export default async function ResumePage({
   params: Promise<{ jobInfoId: string }>
 }) {
   const { jobInfoId } = await params
+  const { userId, redirectToSignIn } = await getCurrentUser()
+  if (userId == null) return redirectToSignIn()
+
+  const jobInfo = await getJobInfo(jobInfoId, userId)
+  if (jobInfo == null) return notFound()
 
   return (
     <div className="container py-4 space-y-4 h-screen-header flex flex-col items-start">
       <JobInfoBackLink jobInfoId={jobInfoId} />
-      <Suspense
-        fallback={<Loader2Icon className="animate-spin size-24 m-auto" />}
-      >
-        <SuspendedComponent jobInfoId={jobInfoId} />
-      </Suspense>
+      <ResumePageClient 
+        jobInfoId={jobInfoId} 
+        initialCoverLetter={jobInfo.coverLetter}
+      />
     </div>
   )
 }
 
-async function SuspendedComponent({ jobInfoId }: { jobInfoId: string }) {
-  // Permission check removed - app is now free to use
-  // Since canRunResumeAnalysis() now always returns true, we skip this check
+async function getJobInfo(id: string, userId: string) {
+  "use cache"
+  cacheTag(getJobInfoIdTag(id))
 
-  return <ResumePageClient jobInfoId={jobInfoId} />
+  return db.query.JobInfoTable.findFirst({
+    where: and(eq(JobInfoTable.id, id), eq(JobInfoTable.userId, userId)),
+  })
 }

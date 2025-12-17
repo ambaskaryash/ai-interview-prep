@@ -40,9 +40,9 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { MarkdownRenderer } from "@/components/MarkdownRenderer"
-import { FileTextIcon, Loader2Icon } from "lucide-react"
+import { FileTextIcon, Loader2Icon, RefreshCwIcon } from "lucide-react"
 
-export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
+export function ResumePageClient({ jobInfoId, initialCoverLetter }: { jobInfoId: string; initialCoverLetter?: string | null }) {
   const [isDragOver, setIsDragOver] = useState(false)
   const fileRef = useRef<File | null>(null)
   const [isCoverLetterOpen, setIsCoverLetterOpen] = useState(false)
@@ -193,7 +193,23 @@ export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
                 </DialogTrigger>
                 <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle>Cover Letter</DialogTitle>
+                    <div className="flex items-center justify-between">
+                      <DialogTitle>Cover Letter</DialogTitle>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => generateCoverLetter("")}
+                        disabled={isCoverLetterLoading}
+                      >
+                        <RefreshCwIcon
+                          className={cn(
+                            "size-4 mr-2",
+                            isCoverLetterLoading && "animate-spin"
+                          )}
+                        />
+                        Regenerate
+                      </Button>
+                    </div>
                     <DialogDescription>
                       AI-generated cover letter based on your resume and the job description.
                     </DialogDescription>

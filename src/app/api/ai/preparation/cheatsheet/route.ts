@@ -26,7 +26,12 @@ export async function POST(req: Request) {
     })
   }
 
-  const res = await generateCheatsheet(jobInfo)
+  const res = await generateCheatsheet(jobInfo, async (text) => {
+    await db
+      .update(JobInfoTable)
+      .set({ cheatsheet: text })
+      .where(eq(JobInfoTable.id, jobInfoId))
+  })
 
   return res.toTextStreamResponse()
 }

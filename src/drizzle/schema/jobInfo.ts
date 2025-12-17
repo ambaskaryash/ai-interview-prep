@@ -1,4 +1,4 @@
-import { pgEnum, pgTable, varchar } from "drizzle-orm/pg-core"
+import { pgEnum, pgTable, text, varchar } from "drizzle-orm/pg-core"
 import { createdAt, id, updatedAt } from "../schemaHelpers"
 import { UserTable } from "./user"
 import { relations } from "drizzle-orm"
@@ -21,6 +21,9 @@ export const JobInfoTable = pgTable("job_info", {
   userId: varchar()
     .references(() => UserTable.id, { onDelete: "cascade" })
     .notNull(),
+  coverLetter: text(),
+  studyPlan: text(),
+  cheatsheet: text(),
   createdAt,
   updatedAt,
 })

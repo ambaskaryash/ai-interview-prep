@@ -6,10 +6,14 @@ export async function generateStudyPlan(
   jobInfo: Pick<
     typeof JobInfoTable.$inferSelect,
     "title" | "description" | "experienceLevel"
-  >
+  >,
+  onFinish?: (text: string) => Promise<void>
 ) {
   return streamText({
     model: groq("llama-3.3-70b-versatile"),
+    onFinish: async ({ text }) => {
+      if (onFinish) await onFinish(text)
+    },
     system: `You are an expert technical interview coach.
 Create a structured 3-day study plan for this job application.
 
@@ -42,10 +46,14 @@ export async function generateCheatsheet(
   jobInfo: Pick<
     typeof JobInfoTable.$inferSelect,
     "title" | "description" | "experienceLevel"
-  >
+  >,
+  onFinish?: (text: string) => Promise<void>
 ) {
   return streamText({
     model: groq("llama-3.3-70b-versatile"),
+    onFinish: async ({ text }) => {
+      if (onFinish) await onFinish(text)
+    },
     system: `You are an expert technical interview coach.
 Create a "Day of Interview" Cheatsheet for this job application.
 

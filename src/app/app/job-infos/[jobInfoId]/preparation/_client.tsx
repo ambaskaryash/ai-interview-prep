@@ -9,7 +9,15 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
-export function PreparationPageClient({ jobInfoId }: { jobInfoId: string }) {
+export function PreparationPageClient({
+  jobInfoId,
+  initialStudyPlan,
+  initialCheatsheet,
+}: {
+  jobInfoId: string
+  initialStudyPlan?: string | null
+  initialCheatsheet?: string | null
+}) {
   const [activeTab, setActiveTab] = useState<"study-plan" | "cheatsheet">("study-plan")
 
   return (
@@ -40,19 +48,20 @@ export function PreparationPageClient({ jobInfoId }: { jobInfoId: string }) {
       </div>
 
       {activeTab === "study-plan" ? (
-        <StudyPlanTab jobInfoId={jobInfoId} />
+        <StudyPlanTab jobInfoId={jobInfoId} initialData={initialStudyPlan} />
       ) : (
-        <CheatsheetTab jobInfoId={jobInfoId} />
+        <CheatsheetTab jobInfoId={jobInfoId} initialData={initialCheatsheet} />
       )}
     </div>
   )
 }
 
-function StudyPlanTab({ jobInfoId }: { jobInfoId: string }) {
+function StudyPlanTab({ jobInfoId, initialData }: { jobInfoId: string; initialData?: string | null }) {
   const { completion, isLoading, complete } = useCompletion({
     api: "/api/ai/preparation/study-plan",
     streamProtocol: "text",
     body: { jobInfoId },
+    initialCompletion: initialData || undefined,
     onError: (err) => {
       console.error(err)
       toast.error("Failed to generate study plan")
@@ -69,12 +78,10 @@ function StudyPlanTab({ jobInfoId }: { jobInfoId: string }) {
               A structured plan to get you interview-ready in 3 days.
             </CardDescription>
           </div>
-          {!completion && !isLoading && (
-            <Button onClick={() => complete("")}>
-              <SparklesIcon className="size-4 mr-2" />
-              Generate Plan
-            </Button>
-          )}
+          <Button onClick={() => complete("")} disabled={isLoading} variant={completion ? "outline" : "default"}>
+            <SparklesIcon className="size-4 mr-2" />
+            {completion ? "Regenerate Plan" : "Generate Plan"}
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
@@ -96,11 +103,12 @@ function StudyPlanTab({ jobInfoId }: { jobInfoId: string }) {
   )
 }
 
-function CheatsheetTab({ jobInfoId }: { jobInfoId: string }) {
+function CheatsheetTab({ jobInfoId, initialData }: { jobInfoId: string; initialData?: string | null }) {
   const { completion, isLoading, complete } = useCompletion({
     api: "/api/ai/preparation/cheatsheet",
     streamProtocol: "text",
     body: { jobInfoId },
+    initialCompletion: initialData || undefined,
     onError: (err) => {
       console.error(err)
       toast.error("Failed to generate cheatsheet")
@@ -114,15 +122,13 @@ function CheatsheetTab({ jobInfoId }: { jobInfoId: string }) {
           <div>
             <CardTitle>Interview Cheatsheet</CardTitle>
             <CardDescription>
-              Quick reference guide for the day of the interview.
+              Quick reference guide for your interview day.
             </CardDescription>
           </div>
-          {!completion && !isLoading && (
-            <Button onClick={() => complete("")}>
-              <SparklesIcon className="size-4 mr-2" />
-              Generate Cheatsheet
-            </Button>
-          )}
+          <Button onClick={() => complete("")} disabled={isLoading} variant={completion ? "outline" : "default"}>
+            <FileTextIcon className="size-4 mr-2" />
+            {completion ? "Regenerate Cheatsheet" : "Generate Cheatsheet"}
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
@@ -134,7 +140,7 @@ function CheatsheetTab({ jobInfoId }: { jobInfoId: string }) {
         ) : !completion ? (
           <div className="flex flex-col items-center justify-center py-12 text-muted-foreground gap-4 border-2 border-dashed rounded-lg">
             <FileTextIcon className="size-12 opacity-50" />
-            <p>Click "Generate Cheatsheet" to create your quick reference.</p>
+            <p>Click "Generate Cheatsheet" to get started.</p>
           </div>
         ) : (
           <MarkdownRenderer>{completion}</MarkdownRenderer>

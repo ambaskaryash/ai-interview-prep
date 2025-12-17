@@ -26,7 +26,12 @@ export async function POST(req: Request) {
     })
   }
 
-  const res = await generateStudyPlan(jobInfo)
+  const res = await generateStudyPlan(jobInfo, async (text) => {
+    await db
+      .update(JobInfoTable)
+      .set({ studyPlan: text })
+      .where(eq(JobInfoTable.id, jobInfoId))
+  })
 
   return res.toTextStreamResponse()
 }
