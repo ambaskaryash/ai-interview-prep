@@ -1,5 +1,5 @@
 import { JobInfoTable } from "@/drizzle/schema"
-import { groq } from "../models/groq"
+import { google } from "../models/google"
 import { streamObject } from "ai"
 import { aiAnalyzeSchema } from "./schemas"
 import * as mammoth from "mammoth"
@@ -44,10 +44,8 @@ export async function analyzeResumeForJob({
   }
 
   return streamObject({
-    model: groq("llama-3.3-70b-versatile"),
+    model: google("gemini-1.5-flash"),
     schema: aiAnalyzeSchema,
-    // @ts-ignore
-    mode: "json",
     messages: [
       {
         role: "user",
