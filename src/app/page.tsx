@@ -3,12 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getCurrentUser } from "@/services/clerk/lib/getCurrentUser"
 import { SignInButton } from "@clerk/nextjs"
 import {
+  ActivityIcon,
   BookOpenCheckIcon,
   Brain,
   FileSlidersIcon,
   FileText,
+  MicIcon,
   Search,
   SpeechIcon,
+  TimerIcon,
+  ZapIcon,
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
@@ -73,6 +77,7 @@ export default function LandingPage() {
       />
       <Navbar />
       <Hero />
+      <HowItWorks />
       <Features />
       <DetailedFeatures />
       <Stats />
@@ -127,20 +132,60 @@ function Hero() {
       <div className="container">
         <div className="text-center">
           <h2 className="text-4xl sm:text-6xl font-bold text-foreground mb-6 leading-tight">
-            Land your dream job with{" "}
+            Master your interview delivery with{" "}
             <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent text-nowrap">
-              AI-powered
-            </span>{" "}
-            job preparation
+              real-time voice analytics
+            </span>
           </h2>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-            Skip the guesswork and accelerate your job search. Our AI platform
-            eliminates interview anxiety, optimizes your resume, and gives you
-            the technical edge to land offers faster.
+            Get data-driven feedback on your pace, tone, and confidence—not just your answers.
+            Our AI platform eliminates anxiety and gives you the technical edge to land offers faster.
           </p>
           <Button size="lg" className="h-12 px-6 text-base" asChild>
             <Link href="/app">Get Started for Free</Link>
           </Button>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function HowItWorks() {
+  const steps = [
+    {
+      number: "01",
+      title: "Analyze Resume",
+      description: "Upload your resume to get instant ATS scoring and tailored optimization tips.",
+    },
+    {
+      number: "02",
+      title: "Practice Voice Interviews",
+      description: "Engage in realistic voice conversations with our AI interviewer that adapts to you.",
+    },
+    {
+      number: "03",
+      title: "Get Granular Feedback",
+      description: "Review detailed analytics on your speaking pace, filler words, and confidence levels.",
+    },
+  ]
+
+  return (
+    <section className="py-20 bg-muted/30">
+      <div className="container">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold mb-4">How It Works</h2>
+          <p className="text-muted-foreground">Your path to interview mastery in three simple steps</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {steps.map((step) => (
+            <div key={step.number} className="relative">
+              <div className="bg-card border border-border rounded-xl p-8 h-full hover:shadow-lg transition-shadow">
+                <div className="text-5xl font-bold text-primary/10 mb-4">{step.number}</div>
+                <h3 className="text-xl font-bold mb-3">{step.title}</h3>
+                <p className="text-muted-foreground">{step.description}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -285,6 +330,88 @@ function DetailedFeatures() {
                   <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
                     Good structure
                   </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Speech Analytics */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="lg:order-2">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <ActivityIcon className="w-6 h-6 text-primary" />
+                </div>
+                <h4 className="text-2xl font-bold text-foreground">
+                  Deep Speech Analytics
+                </h4>
+              </div>
+              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+                Go beyond "good job". Our advanced speech analysis engine breaks
+                down your delivery into actionable metrics. Understand your pacing,
+                filler word usage, and confidence levels to sound more professional.
+              </p>
+              <ul className="space-y-3 text-muted-foreground">
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  Real-time WPM (Words Per Minute) tracking
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  Filler word detection (um, ah, like)
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  Vocal confidence scoring
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  Tone and sentiment analysis
+                </li>
+              </ul>
+            </div>
+            <div className="lg:order-1 bg-card rounded-2xl p-6 border border-border shadow-lg">
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <TimerIcon className="w-4 h-4 text-primary" />
+                    <span className="text-xs font-medium">Pace</span>
+                  </div>
+                  <div className="text-2xl font-bold">145 <span className="text-xs font-normal text-muted-foreground">WPM</span></div>
+                  <div className="text-xs text-green-500 mt-1">Optimal speed</div>
+                </div>
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <MicIcon className="w-4 h-4 text-primary" />
+                    <span className="text-xs font-medium">Fillers</span>
+                  </div>
+                  <div className="text-2xl font-bold">2 <span className="text-xs font-normal text-muted-foreground">found</span></div>
+                  <div className="text-xs text-muted-foreground mt-1">Top 10%</div>
+                </div>
+              </div>
+              
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <ZapIcon className="w-4 h-4 text-primary" />
+                    <span className="text-xs font-medium">Confidence Trend</span>
+                  </div>
+                  <span className="text-xs font-bold text-primary">High</span>
+                </div>
+                <div className="h-24 flex items-end gap-1 items-end justify-between px-2">
+                   {[40, 60, 55, 70, 85, 80, 90, 85, 95, 90].map((h, i) => (
+                      <div 
+                        key={i} 
+                        className="bg-primary/20 hover:bg-primary/40 transition-colors w-full rounded-t-sm relative group"
+                        style={{ height: `${h}%` }}
+                      >
+                         {i === 8 && (
+                           <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-popover text-popover-foreground text-[10px] px-2 py-1 rounded shadow-sm whitespace-nowrap hidden group-hover:block">
+                             Peak Confidence
+                           </div>
+                         )}
+                      </div>
+                   ))}
                 </div>
               </div>
             </div>
