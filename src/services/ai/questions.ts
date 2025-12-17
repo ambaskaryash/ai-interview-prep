@@ -4,7 +4,7 @@ import {
   QuestionTable,
 } from "@/drizzle/schema"
 import { CoreMessage, streamText } from "ai"
-import { openai } from "./models/openai"
+import { groq } from "./models/groq"
 
 export function generateAiQuestion({
   jobInfo,
@@ -32,7 +32,7 @@ export function generateAiQuestion({
   )
 
   return streamText({
-    model: openai("gpt-4o"),
+    model: groq("llama-3.3-70b-versatile"),
     onFinish: ({ text }) => onFinish(text),
     messages: [
       ...previousMessages,
@@ -69,7 +69,7 @@ export function generateAiQuestionFeedback({
   answer: string
 }) {
   return streamText({
-    model: openai("gpt-4o"),
+    model: groq("llama-3.3-70b-versatile"),
     prompt: answer,
     system: `You are an expert technical interviewer. Your job is to evaluate the candidate's answer to a technical interview question.
 \`\`\`

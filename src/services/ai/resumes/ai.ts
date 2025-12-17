@@ -1,5 +1,5 @@
 import { JobInfoTable } from "@/drizzle/schema"
-import { openai } from "../models/openai"
+import { groq } from "../models/groq"
 import { streamObject } from "ai"
 import { aiAnalyzeSchema } from "./schemas"
 
@@ -14,7 +14,7 @@ export async function analyzeResumeForJob({
   >
 }) {
   return streamObject({
-    model: openai("gpt-4o"),
+    model: groq("llama-3.3-70b-versatile"),
     schema: aiAnalyzeSchema,
     messages: [
       {

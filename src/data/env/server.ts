@@ -12,6 +12,7 @@ export const env = createEnv({
     HUME_SECRET_KEY: z.string().min(1),
     GEMINI_API_KEY: z.string().min(1).optional(),
     OPENAI_API_KEY: z.string().min(1).optional(),
+    GROQ_API_KEY: z.string().min(1).optional(),
   },
   createFinalSchema: env => {
     return z.object(env).transform(val => {

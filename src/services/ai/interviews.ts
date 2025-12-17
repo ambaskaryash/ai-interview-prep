@@ -1,5 +1,5 @@
 import { JobInfoTable } from "@/drizzle/schema"
-import { openai } from "./models/openai"
+import { groq } from "./models/groq"
 import { generateText } from "ai"
 import { fetchChatMessages } from "../hume/lib/api"
 
@@ -35,10 +35,10 @@ export async function generateAiInterviewFeedback({
     .filter(f => f != null)
 
   // Use a Gemini model that satisfies LanguageModelV2 requirements
-  const openaiModel = openai("gpt-4o");
+  const groqModel = groq("llama-3.3-70b-versatile");
 
   const { text } = await generateText({
-    model: openaiModel,
+    model: groqModel,
     prompt: JSON.stringify(formattedMessages),
     system: `You are an expert interview coach and evaluator. Your role is to analyze a mock job interview transcript and provide clear, detailed, and structured feedback on the interviewee's performance based on the job requirements. Your output should be in markdown format.
   
