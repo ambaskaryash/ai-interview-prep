@@ -40,6 +40,17 @@ export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
     complete: generateAnalysis,
   } = useCompletion({
     api: "/api/ai/resumes/analyze",
+    onResponse: (response) => {
+      console.log("[client] Analysis response received:", response.status, response.statusText)
+    },
+    onFinish: (prompt, completion) => {
+      console.log("[client] Analysis finished. Length:", completion.length)
+      console.log("[client] Analysis content preview:", completion.slice(0, 100))
+    },
+    onError: (error) => {
+      console.error("[client] Analysis error:", error)
+      toast.error("Failed to analyze resume. Please try again.")
+    },
     fetch: (url, options) => {
       const headers = new Headers(options?.headers)
       headers.delete("Content-Type")
@@ -50,9 +61,17 @@ export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
       }
       formData.append("jobInfoId", jobInfoId)
 
+      console.log("[client] Sending resume analysis request...")
       return fetch(url, { ...options, headers, body: formData })
     },
   })
+
+  // Debug completion updates
+  useMemo(() => {
+    if (completion) {
+      console.log("[client] Completion updated. Length:", completion.length)
+    }
+  }, [completion])
 
   const aiAnalysis = useMemo(() => {
     if (!completion) return undefined
@@ -61,11 +80,17 @@ export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
       const jsonStart = completion.indexOf("{")
       const jsonEnd = completion.lastIndexOf("}")
       
-      if (jsonStart === -1 || jsonEnd === -1) return undefined
+      if (jsonStart === -1 || jsonEnd === -1) {
+        console.log("[client] JSON markers not found yet")
+        return undefined
+      }
       
       const jsonString = completion.slice(jsonStart, jsonEnd + 1)
-      return JSON.parse(jsonString) as z.infer<typeof aiAnalyzeSchema>
+      const parsed = JSON.parse(jsonString) as z.infer<typeof aiAnalyzeSchema>
+      console.log("[client] Successfully parsed JSON analysis")
+      return parsed
     } catch (error) {
+      console.log("[client] JSON parse error (likely incomplete):", error)
       return undefined
     }
   }, [completion])
