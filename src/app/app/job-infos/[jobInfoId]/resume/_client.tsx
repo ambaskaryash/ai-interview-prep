@@ -40,6 +40,7 @@ export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
     complete: generateAnalysis,
   } = useCompletion({
     api: "/api/ai/resumes/analyze",
+    streamProtocol: "text",
     onResponse: (response) => {
       console.log("[client] Analysis response received:", response.status, response.statusText)
     },
