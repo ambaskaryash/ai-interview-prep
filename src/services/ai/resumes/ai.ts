@@ -1,12 +1,11 @@
 import { JobInfoTable } from "@/drizzle/schema"
 import { groq } from "../models/groq"
-import { streamObject } from "ai"
-import { aiAnalyzeSchema } from "./schemas"
+import { streamText } from "ai"
 import * as mammoth from "mammoth"
 // @ts-ignore
 import PDFParser from "pdf2json"
 
-export async function analyzeResumeForJob({
+export async function analyzeResume({
   resumeFile,
   jobInfo,
 }: {
@@ -16,6 +15,7 @@ export async function analyzeResumeForJob({
     "title" | "experienceLevel" | "description"
   >
 }) {
+  console.log("Starting resume analysis with streamText (Groq Llama 3.3)...")
   const buffer = Buffer.from(await resumeFile.arrayBuffer())
   let resumeText = ""
 
@@ -43,11 +43,8 @@ export async function analyzeResumeForJob({
     throw new Error("Unsupported file type for analysis")
   }
 
-  return streamObject({
+  return streamText({
     model: groq("llama-3.3-70b-versatile"),
-    schema: aiAnalyzeSchema,
-    // @ts-ignore
-    mode: "json",
     messages: [
       {
         role: "user",
@@ -65,8 +62,46 @@ ${jobInfo.description}
 Experience Level: ${jobInfo.experienceLevel}
 ${jobInfo.title ? `\nJob Title: ${jobInfo.title}` : ""}
 
-Your task is to evaluate the resume against the job requirements and provide structured feedback using the following categories:
+Your task is to evaluate the resume against the job requirements and provide structured feedback.
 
+Return the response in the following JSON format ONLY. Do not use markdown code blocks (e.g. \`\`\`json). Just return the raw JSON object.
+
+{
+  "overallScore": number, // Overall score from 0-10
+  "ats": {
+    "score": number, // 0-10
+    "summary": "Short summary of ATS analysis",
+    "feedback": [
+      {
+        "type": "strength" | "minor-improvement" | "major-improvement",
+        "name": "Feedback label",
+        "message": "Specific feedback message"
+      }
+    ]
+  },
+  "jobMatch": {
+    "score": number, // 0-10
+    "summary": "Short summary of job match analysis",
+    "feedback": [...]
+  },
+  "writingAndFormatting": {
+    "score": number, // 0-10
+    "summary": "Short summary",
+    "feedback": [...]
+  },
+  "keywordCoverage": {
+    "score": number, // 0-10
+    "summary": "Short summary",
+    "feedback": [...]
+  },
+  "other": {
+    "score": number, // 0-10
+    "summary": "Short summary",
+    "feedback": [...]
+  }
+}
+
+Categories to analyze:
 1. **ats** - Analysis of how well the resume matches ATS (Applicant Tracking System) requirements.
    - Consider layout simplicity, use of standard section headings, avoidance of graphics or columns, consistent formatting, etc.
 
@@ -84,23 +119,12 @@ Your task is to evaluate the resume against the job requirements and provide str
 5. **other** - Any other relevant feedback not captured above.
    - This may include things like missing contact info, outdated technologies, major red flags, or career gaps.
 
-For each category, return:
-- \`score\` (1-10): A number rating the resume in that category.
-- \`summary\`: A short, high-level summary of your evaluation.
-- \`feedback\`: An array of structured feedback items:
-  - \`type\`: One of \`"strength"\`, \`"minor-improvement"\`, or \`"major-improvement"\`
-  - \`name\`: A label for the feedback item.
-  - \`message\`: A specific and helpful explanation or recommendation.
-
-Also return an overall score for the resume from 1-10 based on your analysis.
-
-Only return the structured JSON response as defined by the schema. Do not include explanations, markdown, or extra commentary outside the defined format.
-
-Other Guidelines:
+Guidelines:
 - Tailor your analysis and feedback to the specific job description and experience level provided.
 - Be clear, constructive, and actionable. The goal is to help the candidate improve their resume so it is ok to be critical.
-- Refer to the candidate as "you" in your feedback. This feedback should be written as if you were speaking directly to the candidate.
-- Stop generating output as soon you have provided the full feedback.
+- Refer to the candidate as "you" in your feedback.
+- Stop generating output as soon you have provided the full JSON.
 `,
   })
 }
+

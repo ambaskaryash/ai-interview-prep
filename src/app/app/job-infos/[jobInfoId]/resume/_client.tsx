@@ -18,7 +18,7 @@ import {
 import { LoadingSwap } from "@/components/ui/loading-swap"
 import { cn } from "@/lib/utils"
 import { aiAnalyzeSchema } from "@/services/ai/resumes/schemas"
-import { experimental_useObject as useObject } from "@ai-sdk/react"
+import { useCompletion } from "@ai-sdk/react"
 import { DeepPartial } from "ai"
 import {
   AlertCircleIcon,
@@ -26,7 +26,7 @@ import {
   UploadIcon,
   XCircleIcon,
 } from "lucide-react"
-import { ReactNode, useRef, useState } from "react"
+import { ReactNode, useRef, useState, useMemo } from "react"
 import { toast } from "sonner"
 import z from "zod"
 
@@ -35,12 +35,11 @@ export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
   const fileRef = useRef<File | null>(null)
 
   const {
-    object: aiAnalysis,
+    completion,
     isLoading,
-    submit: generateAnalysis,
-  } = useObject({
+    complete: generateAnalysis,
+  } = useCompletion({
     api: "/api/ai/resumes/analyze",
-    schema: aiAnalyzeSchema,
     fetch: (url, options) => {
       const headers = new Headers(options?.headers)
       headers.delete("Content-Type")
@@ -54,6 +53,17 @@ export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
       return fetch(url, { ...options, headers, body: formData })
     },
   })
+
+  const aiAnalysis = useMemo(() => {
+    if (!completion) return undefined
+    try {
+      // Clean up markdown code blocks if present
+      const cleanJson = completion.replace(/```json\n?|```/g, "")
+      return JSON.parse(cleanJson) as z.infer<typeof aiAnalyzeSchema>
+    } catch (error) {
+      return undefined
+    }
+  }, [completion])
 
   function handleFileUpload(file: File | null) {
     fileRef.current = file
@@ -76,7 +86,7 @@ export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
       return
     }
 
-    generateAnalysis(null)
+    generateAnalysis("")
   }
 
   return (

@@ -3,7 +3,7 @@ import { JobInfoTable } from "@/drizzle/schema"
 import { getJobInfoIdTag } from "@/features/jobInfos/dbCache"
 import { canRunResumeAnalysis } from "@/features/resumeAnalyses/permissions"
 // Plan limit import removed - app is now free to use
-import { analyzeResumeForJob } from "@/services/ai/resumes/ai"
+import { analyzeResume } from "@/services/ai/resumes/ai"
 import { getCurrentUser } from "@/services/clerk/lib/getCurrentUser"
 import { and, eq } from "drizzle-orm"
 import { cacheTag } from "next/dist/server/use-cache/cache-tag"
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
   // Permission check removed - app is now free to use
   // Since canRunResumeAnalysis() now always returns true, we skip this check
 
-  const res = await analyzeResumeForJob({
+  const res = await analyzeResume({
     resumeFile,
     jobInfo,
   })
