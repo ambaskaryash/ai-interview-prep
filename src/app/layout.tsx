@@ -24,7 +24,17 @@ export const metadata: Metadata = {
     "technical interview",
     "behavioral interview",
     "voice practice",
-    "career development"
+    "career development",
+    "mock interview",
+    "coding interview prep",
+    "system design interview",
+    "behavioral questions",
+    "star method",
+    "voice ai",
+    "interview simulator",
+    "speech analytics",
+    "resume scorer",
+    "ats checker"
   ],
   authors: [{ name: "EvoInterview Team" }],
   creator: "EvoInterview",

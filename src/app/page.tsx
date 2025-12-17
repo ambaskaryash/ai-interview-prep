@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { CheckIcon, XIcon } from "lucide-react"
 import { getCurrentUser } from "@/services/clerk/lib/getCurrentUser"
 import { SignInButton } from "@clerk/nextjs"
 import {
@@ -85,6 +86,7 @@ export default function LandingPage() {
       <Hero />
       <TrustedBy />
       <HowItWorks />
+      <ComparisonTable />
       <Features />
       <DetailedFeatures />
       <Stats />
@@ -194,6 +196,117 @@ function HowItWorks() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function ComparisonTable() {
+  const features = [
+    {
+      name: "Real-time Voice Feedback",
+      evo: true,
+      traditional: false,
+      generic: false,
+    },
+    {
+      name: "ATS Resume Optimization",
+      evo: true,
+      traditional: false,
+      generic: true,
+    },
+    {
+      name: "Speech Analytics (WPM, Fillers)",
+      evo: true,
+      traditional: false,
+      generic: false,
+    },
+    {
+      name: "Company-Specific Practice",
+      evo: true,
+      traditional: true,
+      generic: false,
+    },
+    {
+      name: "Instant Scoring & Metrics",
+      evo: true,
+      traditional: false,
+      generic: false,
+    },
+    {
+      name: "Free to Use",
+      evo: true,
+      traditional: false,
+      generic: true,
+    },
+  ]
+
+  return (
+    <section className="py-20 bg-background">
+      <div className="container max-w-5xl">
+        <div className="text-center mb-16">
+          <h3 className="text-3xl font-bold mb-4">Why Choose EvoInterview?</h3>
+          <p className="text-muted-foreground">
+            See how we stack up against traditional methods and generic tools
+          </p>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="py-4 px-6 text-left text-lg font-semibold text-foreground w-1/3">
+                  Feature
+                </th>
+                <th className="py-4 px-6 text-center text-lg font-bold text-primary w-1/5 bg-primary/5 rounded-t-lg">
+                  EvoInterview
+                </th>
+                <th className="py-4 px-6 text-center text-lg font-medium text-muted-foreground w-1/5">
+                  Traditional Coaching
+                </th>
+                <th className="py-4 px-6 text-center text-lg font-medium text-muted-foreground w-1/5">
+                  Generic Chatbots
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {features.map((feature, index) => (
+                <tr
+                  key={index}
+                  className="border-b border-border/50 hover:bg-muted/20 transition-colors"
+                >
+                  <td className="py-4 px-6 text-foreground font-medium">
+                    {feature.name}
+                  </td>
+                  <td className="py-4 px-6 text-center bg-primary/5">
+                    {feature.evo ? (
+                      <div className="flex justify-center">
+                        <div className="bg-primary text-primary-foreground rounded-full p-1">
+                          <CheckIcon className="w-4 h-4" />
+                        </div>
+                      </div>
+                    ) : (
+                      <XIcon className="w-5 h-5 text-muted-foreground mx-auto" />
+                    )}
+                  </td>
+                  <td className="py-4 px-6 text-center">
+                    {feature.traditional ? (
+                      <CheckIcon className="w-5 h-5 text-green-500 mx-auto" />
+                    ) : (
+                      <XIcon className="w-5 h-5 text-muted-foreground mx-auto" />
+                    )}
+                  </td>
+                  <td className="py-4 px-6 text-center">
+                    {feature.generic ? (
+                      <CheckIcon className="w-5 h-5 text-green-500 mx-auto" />
+                    ) : (
+                      <XIcon className="w-5 h-5 text-muted-foreground mx-auto" />
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
