@@ -25,6 +25,7 @@ import { condenseChatMessages } from "@/services/hume/lib/condenseChatMessages"
 import { fetchChatMessages } from "@/services/hume/lib/api"
 import { ActionButton } from "@/components/ui/action-button"
 import { generateInterviewFeedback } from "@/features/interviews/actions"
+import { SpeechAnalytics } from "./_SpeechAnalytics"
 
 export default async function InterviewPage({
   params,
@@ -94,11 +95,27 @@ export default async function InterviewPage({
         <Suspense
           fallback={<Loader2Icon className="animate-spin size-24 mx-auto" />}
         >
-          <Messages interview={interview} />
+          <Analytics interview={interview} />
+          <div className="mt-8">
+            <Messages interview={interview} />
+          </div>
         </Suspense>
       </div>
     </div>
   )
+}
+
+async function Analytics({
+  interview,
+}: {
+  interview: Promise<{ humeChatId: string | null }>
+}) {
+  const { humeChatId } = await interview
+  if (humeChatId == null) return null
+
+  const messages = await fetchChatMessages(humeChatId)
+
+  return <SpeechAnalytics messages={messages} />
 }
 
 async function Messages({
