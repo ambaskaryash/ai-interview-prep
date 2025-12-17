@@ -30,9 +30,22 @@ import { ReactNode, useRef, useState, useMemo } from "react"
 import { toast } from "sonner"
 import z from "zod"
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { MarkdownRenderer } from "@/components/MarkdownRenderer"
+import { FileTextIcon, Loader2Icon } from "lucide-react"
+
 export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
   const [isDragOver, setIsDragOver] = useState(false)
   const fileRef = useRef<File | null>(null)
+  const [isCoverLetterOpen, setIsCoverLetterOpen] = useState(false)
 
   const {
     completion,
@@ -63,6 +76,34 @@ export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
       formData.append("jobInfoId", jobInfoId)
 
       console.log("[client] Sending resume analysis request...")
+      return fetch(url, { ...options, headers, body: formData })
+    },
+  })
+
+  const {
+    completion: coverLetter,
+    isLoading: isCoverLetterLoading,
+    complete: generateCoverLetter,
+  } = useCompletion({
+    api: "/api/ai/resumes/cover-letter",
+    streamProtocol: "text",
+    onFinish: () => {
+      toast.success("Cover letter generated successfully!")
+    },
+    onError: (error) => {
+      console.error("[client] Cover letter error:", error)
+      toast.error("Failed to generate cover letter.")
+    },
+    fetch: (url, options) => {
+      const headers = new Headers(options?.headers)
+      headers.delete("Content-Type")
+
+      const formData = new FormData()
+      if (fileRef.current) {
+        formData.append("resumeFile", fileRef.current)
+      }
+      formData.append("jobInfoId", jobInfoId)
+
       return fetch(url, { ...options, headers, body: formData })
     },
   })
@@ -124,14 +165,52 @@ export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
     <div className="space-y-8 w-full">
       <Card>
         <CardHeader>
-          <CardTitle>
-            {isLoading ? "Analyzing your resume" : "Upload your resume"}
-          </CardTitle>
-          <CardDescription>
-            {isLoading
-              ? "This may take a couple minutes"
-              : "Get personalized feedback on your resume based on the job"}
-          </CardDescription>
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle>
+                {isLoading ? "Analyzing your resume" : "Upload your resume"}
+              </CardTitle>
+              <CardDescription>
+                {isLoading
+                  ? "This may take a couple minutes"
+                  : "Get personalized feedback on your resume based on the job"}
+              </CardDescription>
+            </div>
+            {aiAnalysis && (
+              <Dialog open={isCoverLetterOpen} onOpenChange={setIsCoverLetterOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      if (!coverLetter && !isCoverLetterLoading) {
+                        generateCoverLetter("")
+                      }
+                    }}
+                  >
+                    <FileTextIcon className="size-4 mr-2" />
+                    Generate Cover Letter
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Cover Letter</DialogTitle>
+                    <DialogDescription>
+                      AI-generated cover letter based on your resume and the job description.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="mt-4">
+                    {isCoverLetterLoading && !coverLetter ? (
+                      <div className="flex justify-center py-8">
+                        <Loader2Icon className="size-8 animate-spin text-muted-foreground" />
+                      </div>
+                    ) : (
+                      <MarkdownRenderer>{coverLetter}</MarkdownRenderer>
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           <LoadingSwap loadingIconClassName="size-16" isLoading={isLoading}>
@@ -189,7 +268,10 @@ export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
   )
 }
 
-type Keys = Exclude<keyof z.infer<typeof aiAnalyzeSchema>, "overallScore">
+type Keys = Exclude<
+  keyof z.infer<typeof aiAnalyzeSchema>,
+  "overallScore" | "bulletImprovements" | "missingKeywords"
+>
 
 function AnalysisResults({
   aiAnalysis,
@@ -209,78 +291,144 @@ function AnalysisResults({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Analysis Results</CardTitle>
-        <CardDescription className="flex flex-col gap-2 sm:flex-row sm:gap-8">
-          <span>
-            {aiAnalysis?.overallScore == null ? (
-              <Skeleton className="w-32 inline-block" />
-            ) : (
-              <span className="font-semibold text-foreground">
-                Overall Score: {aiAnalysis.overallScore}/100
-              </span>
-            )}
-          </span>
-          <span>
-            {aiAnalysis?.ats?.score == null ? (
-              <Skeleton className="w-32 inline-block" />
-            ) : (
-              <span className="font-semibold text-foreground">
-                ATS Score: {aiAnalysis.ats.score}/100
-              </span>
-            )}
-          </span>
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Accordion type="multiple">
-          {Object.entries(sections).map(([key, title]) => {
-            const category = aiAnalysis?.[key as Keys]
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Analysis Results</CardTitle>
+          <CardDescription className="flex flex-col gap-2 sm:flex-row sm:gap-8">
+            <span>
+              {aiAnalysis?.overallScore == null ? (
+                <Skeleton className="w-32 inline-block" />
+              ) : (
+                <span className="font-semibold text-foreground">
+                  Overall Score: {aiAnalysis.overallScore}/100
+                </span>
+              )}
+            </span>
+            <span>
+              {aiAnalysis?.ats?.score == null ? (
+                <Skeleton className="w-32 inline-block" />
+              ) : (
+                <span className="font-semibold text-foreground">
+                  ATS Score: {aiAnalysis.ats.score}/100
+                </span>
+              )}
+            </span>
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Accordion type="multiple">
+            {Object.entries(sections).map(([key, title]) => {
+              const category = aiAnalysis?.[key as Keys]
 
-            return (
-              <AccordionItem value={title} key={key}>
-                <AccordionTrigger>
-                  <CategoryAccordionHeader
-                    title={title}
-                    score={category?.score}
-                  />
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-4">
-                    <div className="text-muted-foreground">
-                      {category?.summary == null ? (
-                        <span className="space-y-2">
-                          <Skeleton />
-                          <Skeleton className="w-3/4" />
-                        </span>
-                      ) : (
-                        category.summary
-                      )}
+              return (
+                <AccordionItem value={title} key={key}>
+                  <AccordionTrigger>
+                    <CategoryAccordionHeader
+                      title={title}
+                      score={category?.score}
+                    />
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-4">
+                      <div className="text-muted-foreground">
+                        {category?.summary == null ? (
+                          <span className="space-y-2">
+                            <Skeleton />
+                            <Skeleton className="w-3/4" />
+                          </span>
+                        ) : (
+                          category.summary
+                        )}
+                      </div>
+                      <div className="space-y-3">
+                        {category?.feedback == null ? (
+                          <>
+                            <Skeleton className="h-16" />
+                            <Skeleton className="h-16" />
+                            <Skeleton className="h-16" />
+                          </>
+                        ) : (
+                          category.feedback.map((item, index) => {
+                            if (item == null) return null
+
+                            return <FeedbackItem key={index} {...item} />
+                          })
+                        )}
+                      </div>
                     </div>
-                    <div className="space-y-3">
-                      {category?.feedback == null ? (
-                        <>
-                          <Skeleton className="h-16" />
-                          <Skeleton className="h-16" />
-                          <Skeleton className="h-16" />
-                        </>
-                      ) : (
-                        category.feedback.map((item, index) => {
-                          if (item == null) return null
+                  </AccordionContent>
+                </AccordionItem>
+              )
+            })}
+          </Accordion>
+        </CardContent>
+      </Card>
 
-                          return <FeedbackItem key={index} {...item} />
-                        })
-                      )}
+      {/* Missing Keywords Section */}
+      {aiAnalysis?.missingKeywords &&
+        aiAnalysis.missingKeywords.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Missing Keywords</CardTitle>
+              <CardDescription>
+                Consider adding these keywords to your resume to match the job
+                description.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {aiAnalysis.missingKeywords.map((keyword, i) => (
+                  <Badge key={i} variant="outline">
+                    {keyword}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+      {/* Bullet Improvements Section */}
+      {aiAnalysis?.bulletImprovements &&
+        aiAnalysis.bulletImprovements.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Bullet Point Improvements</CardTitle>
+              <CardDescription>
+                AI-suggested rewrites for better impact.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {aiAnalysis.bulletImprovements.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="grid gap-2 border-b pb-4 last:border-0 last:pb-0"
+                >
+                  <div className="space-y-1">
+                    <span className="text-xs font-semibold text-muted-foreground uppercase">
+                      Original
+                    </span>
+                    <div className="text-muted-foreground text-sm">
+                      {item?.original}
                     </div>
                   </div>
-                </AccordionContent>
-              </AccordionItem>
-            )
-          })}
-        </Accordion>
-      </CardContent>
-    </Card>
+                  <div className="space-y-1">
+                    <span className="text-xs font-semibold text-primary uppercase">
+                      Improved
+                    </span>
+                    <div className="font-medium text-foreground">
+                      {item?.improved}
+                    </div>
+                  </div>
+                  <div className="text-xs text-muted-foreground italic">
+                    Why: {item?.explanation}
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+    </div>
   )
 }
 

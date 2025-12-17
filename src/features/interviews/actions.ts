@@ -97,6 +97,7 @@ export async function updateInterview(
 }
 
 export async function generateInterviewFeedback(interviewId: string) {
+  console.log(`[Action] Generating feedback for interview: ${interviewId}`)
   const { userId, user } = await getCurrentUser({ allData: true })
   if (userId == null || user == null) {
     return {
@@ -114,12 +115,14 @@ export async function generateInterviewFeedback(interviewId: string) {
   }
 
   if (interview.humeChatId == null) {
+    console.log(`[Action] Interview ${interviewId} has no Hume Chat ID`)
     return {
       error: true,
       message: "Interview has not been completed yet",
     }
   }
 
+  console.log(`[Action] Calling AI service for Hume Chat ID: ${interview.humeChatId}`)
   const feedback = await generateAiInterviewFeedback({
     humeChatId: interview.humeChatId,
     jobInfo: interview.jobInfo,
@@ -127,12 +130,14 @@ export async function generateInterviewFeedback(interviewId: string) {
   })
 
   if (feedback == null) {
+    console.error(`[Action] AI service returned null feedback`)
     return {
       error: true,
       message: "Failed to generate feedback",
     }
   }
 
+  console.log(`[Action] Feedback generated successfully. Updating DB...`)
   await updateInterviewDb(interviewId, { feedback })
 
   return { error: false }

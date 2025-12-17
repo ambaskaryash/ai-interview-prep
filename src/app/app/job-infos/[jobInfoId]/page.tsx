@@ -39,6 +39,16 @@ const options = [
     href: "resume",
   },
   {
+    label: "Preparation & Study Plan",
+    description: "Get a 3-day study roadmap and a day-of cheatsheet.",
+    href: "preparation",
+  },
+  {
+    label: "Targeted Answer Drills",
+    description: "Practice specific questions with focused AI feedback.",
+    href: "drills",
+  },
+  {
     label: "Update Job Description",
     description: "This should only be used for minor updates.",
     href: "edit",

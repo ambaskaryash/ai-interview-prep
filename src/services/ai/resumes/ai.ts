@@ -94,6 +94,17 @@ Return the response in the following JSON format ONLY. Do not use markdown code 
     "summary": "Short summary",
     "feedback": [...]
   },
+  "bulletImprovements": [
+    {
+      "original": "Original bullet point text",
+      "improved": "Improved version tailored to the job description",
+      "explanation": "Why this improvement helps"
+    }
+  ],
+  "missingKeywords": [
+    "Keyword 1",
+    "Keyword 2"
+  ],
   "other": {
     "score": number, // 0-100
     "summary": "Short summary",

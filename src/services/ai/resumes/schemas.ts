@@ -1,7 +1,7 @@
 import z from "zod"
 
 const categorySchema = z.object({
-  score: z.number().min(0).max(10).describe("Score of the category from 1-10"),
+  score: z.number().min(0).max(100).describe("Score of the category from 0-100"),
   summary: z.string().describe("Short summary of the category"),
   feedback: z
     .array(
@@ -32,6 +32,18 @@ export const aiAnalyzeSchema = z.object({
   keywordCoverage: categorySchema.describe(
     "Analysis of the keyword coverage in the resume (taking into account the job requirements)"
   ),
+  bulletImprovements: z
+    .array(
+      z.object({
+        original: z.string().describe("The original bullet point text"),
+        improved: z.string().describe("The improved version of the bullet point"),
+        explanation: z.string().describe("Why this improvement helps"),
+      })
+    )
+    .describe("Suggestions to improve specific bullet points for better impact"),
+  missingKeywords: z
+    .array(z.string())
+    .describe("Important keywords from the job description that are missing from the resume"),
   other: categorySchema.describe(
     "Any other relevant analysis not covered by the above categories"
   ),

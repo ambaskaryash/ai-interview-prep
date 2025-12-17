@@ -15,7 +15,9 @@ export async function generateAiInterviewFeedback({
   >
   userName: string
 }) {
+  console.log(`[AI Service] Fetching chat messages for Hume ID: ${humeChatId}`)
   const messages = await fetchChatMessages(humeChatId)
+  console.log(`[AI Service] Fetched ${messages.length} messages from Hume`)
 
   const formattedMessages = messages
     .map(message => {
@@ -107,9 +109,10 @@ Additional Notes:
 - Be clear, constructive, and actionable. The goal is to help the interviewee grow.
 - Do not include an h1 title or information about the job description in your response, just include the feedback.
 - Refer to the interviewee as "you" in your feedback. This feedback should be written as if you were speaking directly to the interviewee.
-- Include a number rating (out of 10) in the heading for each category (e.g., "Communication Clarity: 8/10") as well as an overall rating at the very start of the response.
+- Include a number rating (out of 100) in the heading for each category (e.g., "Communication Clarity: 80/100") as well as an overall rating at the very start of the response.
 - Stop generating output as soon you have provided the full feedback.`,
   })
 
+  console.log(`[AI Service] Feedback generated successfully. Length: ${text.length}`)
   return text
 }
