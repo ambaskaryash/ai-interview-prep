@@ -1,5 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { getCurrentUser } from "@/services/clerk/lib/getCurrentUser"
 import { SignInButton } from "@clerk/nextjs"
 import {
@@ -77,11 +83,13 @@ export default function LandingPage() {
       />
       <Navbar />
       <Hero />
+      <TrustedBy />
       <HowItWorks />
       <Features />
       <DetailedFeatures />
       <Stats />
       <Testimonials />
+      <FAQ />
       <Footer />
     </div>
   )
@@ -776,6 +784,94 @@ function Testimonials() {
             <Link href="/app">Start Your Journey Today</Link>
           </Button>
         </div>
+      </div>
+    </section>
+  )
+}
+
+function TrustedBy() {
+  const companies = [
+    "GOOGLE",
+    "AMAZON",
+    "MICROSOFT",
+    "META",
+    "NETFLIX",
+    "UBER",
+    "STRIPE",
+    "AIRBNB",
+  ]
+
+  return (
+    <section className="py-12 border-y border-border/40 bg-muted/10">
+      <div className="container">
+        <p className="text-center text-sm font-medium text-muted-foreground mb-8 uppercase tracking-widest">
+          Trusted by candidates who landed jobs at
+        </p>
+        <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8 opacity-60">
+          {companies.map((company) => (
+            <div
+              key={company}
+              className="text-xl sm:text-2xl font-bold text-muted-foreground hover:text-foreground transition-colors cursor-default"
+            >
+              {company}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function FAQ() {
+  const faqs = [
+    {
+      question: "How does the AI interview practice work?",
+      answer:
+        "Our AI simulates a real interviewer by asking you questions based on your role and experience. It listens to your spoken answers in real-time, analyzes your content and delivery, and provides instant, actionable feedback to help you improve.",
+    },
+    {
+      question: "Is my resume data kept private?",
+      answer:
+        "Yes, absolutely. We take data privacy seriously. Your resume and personal information are encrypted and only used to generate personalized interview questions and feedback. We do not share your data with third parties.",
+    },
+    {
+      question: "Can I practice for specific companies?",
+      answer:
+        "Yes! You can specify the company you are interviewing for, and our AI will tailor the questions and evaluation criteria to match that company's known interview style and values.",
+    },
+    {
+      question: "Is it really free?",
+      answer:
+        "Yes, EvoInterview is currently free to use. We believe in democratizing access to high-quality career preparation tools. You get full access to all features including voice practice, resume analysis, and technical questions.",
+    },
+    {
+      question: "What kind of feedback do I get?",
+      answer:
+        "You get detailed feedback on both what you say (content, structure, keywords) and how you say it (pace, filler words, confidence, tone). We also provide specific suggestions on how to rephrase your answers for better impact.",
+    },
+  ]
+
+  return (
+    <section className="py-20 bg-muted/30">
+      <div className="container max-w-3xl">
+        <div className="text-center mb-16">
+          <h3 className="text-3xl font-bold mb-4">Frequently Asked Questions</h3>
+          <p className="text-muted-foreground">
+            Have questions? We&apos;re here to help.
+          </p>
+        </div>
+        <Accordion type="single" collapsible className="w-full">
+          {faqs.map((faq, index) => (
+            <AccordionItem key={index} value={`item-${index}`}>
+              <AccordionTrigger className="text-left">
+                {faq.question}
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground">
+                {faq.answer}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </div>
     </section>
   )
