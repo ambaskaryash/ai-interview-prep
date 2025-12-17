@@ -5,7 +5,7 @@ import {
   QuestionTable,
 } from "@/drizzle/schema"
 import { getJobInfoIdTag } from "@/features/jobInfos/dbCache"
-import { insertQuestion } from "@/features/questions/db"
+import { insertQuestion, updateQuestion } from "@/features/questions/db"
 import { getQuestionJobInfoTag } from "@/features/questions/dbCache"
 
 import { generateAiQuestion } from "@/services/ai/questions"
@@ -54,6 +54,14 @@ export async function POST(req: Request) {
 
   // Generate the AI question and save it to the database when finished
   try {
+    // Insert a placeholder question to get the ID
+    const { id } = await insertQuestion({
+      text: "Generating...",
+      jobInfoId,
+      difficulty,
+    })
+    console.log(`[ai] Question placeholder created with ID: ${id}`)
+
     console.log("[ai] Calling generateAiQuestion...")
     const res = generateAiQuestion({
       previousQuestions,
@@ -62,21 +70,19 @@ export async function POST(req: Request) {
       onFinish: async question => {
         console.log(`[ai] Generation finished. Text length: ${question.length}`)
         try {
-          const { id } = await insertQuestion({
-            text: question,
-            jobInfoId,
-            difficulty,
-          })
-          console.log(`[ai] Question generated and saved with ID: ${id}`)
+          await updateQuestion(id, { text: question })
+          console.log(`[ai] Question updated with ID: ${id}`)
         } catch (error) {
-          console.error("[ai] Failed to save question to DB:", error)
+          console.error("[ai] Failed to update question in DB:", error)
         }
       },
     })
 
     console.log("[ai] Stream created, returning response")
-    // Stream the AI-generated question to the client
-    return res.toTextStreamResponse()
+    // Stream the AI-generated question to the client with the ID in header
+    return res.toTextStreamResponse({
+      headers: { "X-Question-Id": id },
+    })
   } catch (error) {
     console.error("[ai] Error generating question stream:", error)
     return new Response("Internal Server Error", { status: 500 })

@@ -17,10 +17,9 @@ import {
   QuestionDifficulty,
 } from "@/drizzle/schema"
 import { formatQuestionDifficulty } from "@/features/questions/formatters"
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { useCompletion } from "@ai-sdk/react"
 import { errorToast } from "@/lib/errorToast"
-import z from "zod"
 
 type Status = "awaiting-answer" | "awaiting-difficulty" | "init"
 
@@ -31,25 +30,32 @@ export function NewQuestionClientPage({
 }) {
   const [status, setStatus] = useState<Status>("init")
   const [answer, setAnswer] = useState<string | null>(null)
+  const [questionId, setQuestionId] = useState<string | null>(null)
 
   const {
     complete: generateQuestion,
     completion: question,
     setCompletion: setQuestion,
     isLoading: isGeneratingQuestion,
-    data,
   } = useCompletion({
     api: "/api/ai/questions/generate-question",
+    streamProtocol: "text",
     onResponse: async res => {
+      console.log("[client] generate-question response status:", res.status)
       if (!res.ok) {
         const msg = await res.text()
         throw new Error(msg || "Failed to generate your question")
       }
+      const id = res.headers.get("X-Question-Id")
+      console.log("[client] Received X-Question-Id:", id)
+      if (id) setQuestionId(id)
     },
-    onFinish: () => {
+    onFinish: (prompt, completion) => {
+      console.log("[client] generate-question finished. Length:", completion.length)
       setStatus("awaiting-answer")
     },
     onError: error => {
+      console.error("[client] generate-question error:", error)
       errorToast(error.message)
     },
   })
@@ -61,6 +67,7 @@ export function NewQuestionClientPage({
     isLoading: isGeneratingFeedback,
   } = useCompletion({
     api: "/api/ai/questions/generate-feedback",
+    streamProtocol: "text",
     onResponse: async res => {
       if (!res.ok) {
         const msg = await res.text()
@@ -75,14 +82,9 @@ export function NewQuestionClientPage({
     },
   })
 
-  const questionId = useMemo(() => {
-    const item = data?.at(-1)
-    if (item == null) return null
-    const parsed = z.object({ questionId: z.string() }).safeParse(item)
-    if (!parsed.success) return null
+  // Removed useMemo based questionId logic as we use state now
+  // const questionId = useMemo(...)
 
-    return parsed.data.questionId
-  }, [data])
 
   return (
     <div className="flex flex-col items-center gap-4 w-full mx-w-[2000px] mx-auto flex-grow h-screen-header">
@@ -125,6 +127,7 @@ export function NewQuestionClientPage({
         answer={answer}
         status={status}
         setAnswer={setAnswer}
+        isLoading={isGeneratingQuestion}
       />
     </div>
   )
@@ -136,12 +139,14 @@ function QuestionContainer({
   answer,
   status,
   setAnswer,
+  isLoading,
 }: {
   question: string | null
   feedback: string | null
   answer: string | null
   status: Status
   setAnswer: (value: string) => void
+  isLoading: boolean
 }) {
   return (
     <ResizablePanelGroup direction="horizontal" className="flex-grow border-t">
@@ -149,16 +154,18 @@ function QuestionContainer({
         <ResizablePanelGroup direction="vertical" className="flex-grow">
           <ResizablePanel id="question" defaultSize={25} minSize={5}>
             <ScrollArea className="h-full min-w-48 *:h-full">
-              {status === "init" && question == null ? (
+              {status === "init" && !isLoading && !question ? (
                 <p className="text-base md:text-lg flex items-center justify-center h-full p-6">
                   Get started by selecting a question difficulty above.
                 </p>
               ) : (
-                question && (
-                  <MarkdownRenderer className="p-6">
-                    {question}
-                  </MarkdownRenderer>
-                )
+                <div className="h-full">
+                  {(question || isLoading) && (
+                    <MarkdownRenderer className="p-6">
+                      {question || "Generating question..."}
+                    </MarkdownRenderer>
+                  )}
+                </div>
               )}
             </ScrollArea>
           </ResizablePanel>
