@@ -57,9 +57,14 @@ export function ResumePageClient({ jobInfoId }: { jobInfoId: string }) {
   const aiAnalysis = useMemo(() => {
     if (!completion) return undefined
     try {
-      // Clean up markdown code blocks if present
-      const cleanJson = completion.replace(/```json\n?|```/g, "")
-      return JSON.parse(cleanJson) as z.infer<typeof aiAnalyzeSchema>
+      // Robust JSON extraction
+      const jsonStart = completion.indexOf("{")
+      const jsonEnd = completion.lastIndexOf("}")
+      
+      if (jsonStart === -1 || jsonEnd === -1) return undefined
+      
+      const jsonString = completion.slice(jsonStart, jsonEnd + 1)
+      return JSON.parse(jsonString) as z.infer<typeof aiAnalyzeSchema>
     } catch (error) {
       return undefined
     }
