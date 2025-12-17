@@ -18,7 +18,7 @@ export const aiAnalyzeSchema = z.object({
   overallScore: z
     .number()
     .min(0)
-    .max(10)
+    .max(100)
     .describe("Overall score of the resume"),
   ats: categorySchema.describe(
     "Analysis of how well the resume matches ATS requirements"

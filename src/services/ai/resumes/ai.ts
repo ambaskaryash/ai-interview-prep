@@ -67,9 +67,9 @@ Your task is to evaluate the resume against the job requirements and provide str
 Return the response in the following JSON format ONLY. Do not use markdown code blocks (e.g. \`\`\`json). Just return the raw JSON object.
 
 {
-  "overallScore": number, // Overall score from 0-10
+  "overallScore": number, // Overall score from 0-100
   "ats": {
-    "score": number, // 0-10
+    "score": number, // 0-100
     "summary": "Short summary of ATS analysis",
     "feedback": [
       {
@@ -80,22 +80,22 @@ Return the response in the following JSON format ONLY. Do not use markdown code 
     ]
   },
   "jobMatch": {
-    "score": number, // 0-10
+    "score": number, // 0-100
     "summary": "Short summary of job match analysis",
     "feedback": [...]
   },
   "writingAndFormatting": {
-    "score": number, // 0-10
+    "score": number, // 0-100
     "summary": "Short summary",
     "feedback": [...]
   },
   "keywordCoverage": {
-    "score": number, // 0-10
+    "score": number, // 0-100
     "summary": "Short summary",
     "feedback": [...]
   },
   "other": {
-    "score": number, // 0-10
+    "score": number, // 0-100
     "summary": "Short summary",
     "feedback": [...]
   }

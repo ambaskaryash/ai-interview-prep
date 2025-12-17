@@ -212,12 +212,25 @@ function AnalysisResults({
     <Card>
       <CardHeader>
         <CardTitle>Analysis Results</CardTitle>
-        <CardDescription>
-          {aiAnalysis?.overallScore == null ? (
-            <Skeleton className="w-32" />
-          ) : (
-            `Overall Score: ${aiAnalysis.overallScore}/10`
-          )}
+        <CardDescription className="flex flex-col gap-2 sm:flex-row sm:gap-8">
+          <span>
+            {aiAnalysis?.overallScore == null ? (
+              <Skeleton className="w-32 inline-block" />
+            ) : (
+              <span className="font-semibold text-foreground">
+                Overall Score: {aiAnalysis.overallScore}/100
+              </span>
+            )}
+          </span>
+          <span>
+            {aiAnalysis?.ats?.score == null ? (
+              <Skeleton className="w-32 inline-block" />
+            ) : (
+              <span className="font-semibold text-foreground">
+                ATS Score: {aiAnalysis.ats.score}/100
+              </span>
+            )}
+          </span>
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -281,9 +294,9 @@ function CategoryAccordionHeader({
   let badge: ReactNode
   if (score == null) {
     badge = <Skeleton className="w-16" />
-  } else if (score >= 8) {
+  } else if (score >= 80) {
     badge = <Badge>Excellent</Badge>
-  } else if (score >= 6) {
+  } else if (score >= 60) {
     badge = <Badge variant="warning">Ok</Badge>
   } else {
     badge = <Badge variant="destructive">Needs Works</Badge>
@@ -295,7 +308,7 @@ function CategoryAccordionHeader({
         <span>{title}</span>
         <div className="no-underline">{badge}</div>
       </div>
-      {score == null ? <Skeleton className="w-12" /> : `${score}/10`}
+      {score == null ? <Skeleton className="w-12" /> : `${score}/100`}
     </div>
   )
 }
